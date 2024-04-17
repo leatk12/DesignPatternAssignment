@@ -1,0 +1,28 @@
+package Assignment.Game;
+
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+
+public abstract class GameObject {
+    protected Image img;
+    protected double x, y;
+    protected GraphicsContext gc;
+
+    public GameObject(double x, double y, GraphicsContext gc) {
+        this.x = x;
+        this.y = y;
+        this.gc = gc;
+    }
+
+    public void update() {
+        if (img != null) {
+            gc.drawImage(img, x - img.getWidth() / 2, y - img.getHeight() / 2);
+        }
+    }
+
+    // Methods to control movement, to be possibly overridden in subclasses
+    public void moveLeftIfPossible() { }
+    public void moveRightIfPossible() { }
+    public void moveUpIfPossible() { }
+    public void moveDownIfPossible() { }
+}

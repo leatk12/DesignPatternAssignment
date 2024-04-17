@@ -1,0 +1,65 @@
+package Assignment.Game;
+
+import java.util.ArrayList;
+
+import javafx.animation.AnimationTimer;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+
+public class Game extends Application {
+	Pane root;
+	Scene scene;
+	Canvas canvas;
+	GraphicsContext gc;
+	
+	ArrayList<GameObject>list = new ArrayList<GameObject>();
+	
+	AnimationTimer timer = new AnimationTimer() {
+
+		@Override
+		public void handle(long now) {
+			// TODO Auto-generated method stub
+			gc.fillRect(0, 0,  canvas.getWidth(), canvas.getHeight());
+			for(GameObject obj:list)
+				obj.update();
+		}
+		};
+		
+		Factory factory;
+	
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		launch(args);
+
+	}
+
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		// TODO Auto-generated method stub
+		root = new Pane();
+		scene = new Scene(root, 800, 600);
+		canvas = new Canvas(800, 600);
+		gc = canvas.getGraphicsContext2D();
+		primaryStage.setScene(scene);
+		primaryStage.show();
+		
+		root.getChildren().add(canvas);
+		gc.setFill(Color .LIGHTGRAY);
+		gc.fillRect(0,  0, canvas.getWidth(), canvas.getHeight());
+		
+		factory = new Factory(gc);
+		for(int i=0; i<6; i++)
+			for(int j=0; j<6; j++)
+				list.add(factory.createProduct("num1", i*25, j*25));
+		
+		timer.start();
+		
+	}
+
+}

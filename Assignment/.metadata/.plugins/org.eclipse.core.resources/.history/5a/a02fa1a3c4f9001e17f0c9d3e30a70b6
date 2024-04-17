@@ -1,0 +1,28 @@
+package Assignment.Game;
+
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+
+public class Num1 extends GameObject{
+
+	public Num1(double x, double y, GraphicsContext gc) {
+		super(x, y, gc);
+		// TODO Auto-generated constructor stub
+		img = new Image(Num1.class.getResource("num1.png").toExternalForm());
+		update();
+		}
+	
+	static double dx=1, yOffset=0;
+	double yStart = y;
+	
+	public void update()  {
+		x+=dx;
+		y=yStart+yOffset;
+		if(x>800 || x<0  ) {
+			dx=- dx;
+			yOffset+=30;
+		}
+		super.up
+	}
+
+}

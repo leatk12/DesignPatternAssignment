@@ -1,0 +1,23 @@
+package Assignment.Game;
+
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+
+public abstract class GameObject {
+    protected Image img;
+    protected double x, y;
+    protected GraphicsContext gc;
+
+    public GameObject(double x, double y, GraphicsContext gc) {
+        this.x = x;
+        this.y = y;
+        this.gc = gc;
+    }
+
+    public abstract void update();
+
+    public void moveLeftIfPossible() { /* Logic specific to types of GameObjects */ }
+    public void moveRightIfPossible() { /* Logic specific to types of GameObjects */ }
+    public void moveUpIfPossible() { /* Logic specific to types of GameObjects */ }
+    public void moveDownIfPossible() { /* Logic specific to types of GameObjects */ }
+}

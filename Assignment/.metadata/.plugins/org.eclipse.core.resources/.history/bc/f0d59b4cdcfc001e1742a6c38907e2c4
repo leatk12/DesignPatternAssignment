@@ -1,0 +1,81 @@
+package Assignment.Game;
+
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+
+public class Num1 extends GameObject {
+    private enum Direction {
+        LEFT, RIGHT, UP, DOWN
+    }
+
+    private Direction currentDirection = null;
+    private boolean initialisedDirection = false;
+
+    public Num1(double centerX, double centerY, double tileSize, GraphicsContext gc) {
+        super(centerX, centerY, tileSize, tileSize, gc);
+        img = new Image(Num1.class.getResource("num1.png").toExternalForm());
+        update();
+        this.speedX = tileSize;  // Speed should ensure that the movement is tile by tile
+        this.speedY = tileSize;
+    }
+
+    @Override
+    public void update() {
+        if (!initialisedDirection) {
+            initialiseDirection();
+        } else {
+            updateBehaviour();
+        }
+        super.update();
+    }
+
+    private void initialiseDirection() {
+        // Check available directions and set the initial direction
+        if (!isWall(x, y + Game.getTileSize())) {
+            currentDirection = Direction.DOWN;
+        } else if (!isWall(x, y - Game.getTileSize())) {
+            currentDirection = Direction.UP;
+        } else if (!isWall(x - Game.getTileSize(), y)) {
+            currentDirection = Direction.LEFT;
+        } else if (!isWall(x + Game.getTileSize(), y)) {
+            currentDirection = Direction.RIGHT;
+        }
+        
+        if (currentDirection != null) {
+            initialisedDirection = true;  // Mark that initial direction has been set
+        }
+    }
+
+    private void updateBehaviour() {
+        switch (currentDirection) {
+            case DOWN:
+                if (!isWall(x, y + Game.getTileSize())) {
+                    moveDown();
+                } else {
+                    currentDirection = Direction.UP;  // Reverse direction
+                }
+                break;
+            case UP:
+                if (!isWall(x, y - Game.getTileSize())) {
+                    moveUp();
+                } else {
+                    currentDirection = Direction.DOWN;  // Reverse direction
+                }
+                break;
+            case LEFT:
+                if (!isWall(x - Game.getTileSize(), y)) {
+                    moveLeft();
+                } else {
+                    currentDirection = Direction.RIGHT;  // Reverse direction
+                }
+                break;
+            case RIGHT:
+                if (!isWall(x + Game.getTileSize(), y)) {
+                    moveRight();
+                } else {
+                    currentDirection = Direction.LEFT;  // Reverse direction
+                }
+                break;
+        }
+    }
+}

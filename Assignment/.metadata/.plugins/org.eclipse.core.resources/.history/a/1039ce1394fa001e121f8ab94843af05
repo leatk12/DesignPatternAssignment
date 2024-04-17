@@ -1,0 +1,120 @@
+package Assignment.Game;
+import javafx.animation.AnimationTimer;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+public class Game extends Application {
+
+	private static final int TILE_SIZE =40;
+	private static final int NUM_TILES_X = 20;
+	private static final int NUM_TILES_Y = 15;
+
+	//Array holding the tiles
+	// 0 is a path and 1 is a wall
+	private int[][] maze = new int[NUM_TILES_X][NUM_TILES_Y];
+
+	Pane root;
+	Scene scene;
+	Canvas canvas;
+	GraphicsContext gc;
+
+	AnimationTimer timer;
+	Factory factory;
+	ArrayList<Num1> num1List = new ArrayList<>();
+
+	Player player;
+
+
+
+	public static void main(String[] args) {
+		launch(args);
+	}
+
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		Pane root = new Pane();
+		scene = new Scene(root, 800, 600);
+		canvas = new Canvas(800, 600);
+		gc = canvas.getGraphicsContext2D();
+		primaryStage.setScene(scene);
+
+		primaryStage.show();
+
+		generateMap(root);
+
+		player = Player.getInstance(canvas.getWidth() / 2, canvas.getHeight() - 100, gc);
+
+		root.getChildren().add(canvas);
+		gc.setFill(Color.BLACK);
+		gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
+		factory = new Factory(gc);
+
+		timer = new AnimationTimer() {
+			long lastSpawnTime = 0;
+
+			@Override
+			public void handle(long now) {
+				gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
+				if (System.nanoTime() - lastSpawnTime > 500_000_000)  {
+					double randomX = Math.random() * (canvas.getWidth() - 30);
+					Num1 num1 = (Num1) factory.createProduct("num1", randomX, -30);
+					num1List.add(num1);
+					lastSpawnTime = System.nanoTime();
+				}
+
+				for (int i=0; i < num1List.size(); i++)  {
+					Num1 num1 = num1List.get(i);
+					num1.update();
+
+					if (num1.getY() > canvas.getHeight())  {
+						num1List.remove(num1);
+					}
+				}
+				player.update();
+			}
+
+		};
+		timer.start();
+
+
+		scene.setOnKeyPressed((KeyEvent e)  -> {
+			switch (e.getCode())  {
+			case LEFT:
+				if(!isWall(player.getX() - player.getSpeedX(), player.getY())) player.moveLeft();
+				break;
+			case RIGHT:
+				if (!isWall(player.getX() + player.getSpeedX(), player.getY())) player.moveRight();
+				break;
+			case UP:
+				if (!isWall(player.getX(), player.getY() - player.getSpeedY())) player.moveUp();
+				break;
+			case DOWN:
+				if (!isWall(player.getX(), player.getY() + player.getSpeedY())) player.moveDown();
+				break;
+			default:
+				break;
+
+			}
+		});
+	}
+
+	
+	private boolean isWall(double x, double y)  {
+		int gridX = (int) x / TILE_SIZE;
+		int gridY = (int) y / TILE_SIZE;
+		return maze[gridX][gridY]  == 1;
+	}
+}

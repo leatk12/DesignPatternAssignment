@@ -1,0 +1,66 @@
+package Assignment.Game;
+
+
+import javafx.animation.AnimationTimer;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+
+import java.util.ArrayList;
+
+public class Game extends Application {
+    Pane root;
+    Scene scene;
+    Canvas canvas;
+    GraphicsContext gc;
+
+    AnimationTimer timer;
+    Factory factory;
+    ArrayList<Num1> num1List = new ArrayList<>();
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        root = new Pane();
+        scene = new Scene(root, 800, 600);
+        canvas = new Canvas(800, 600);
+        gc = canvas.getGraphicsContext2D();
+        primaryStage.setScene(scene);
+        primaryStage.show();
+
+        root.getChildren().add(canvas);
+        gc.setFill(Color.LIGHTGRAY);
+        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
+        factory = new Factory(gc);
+
+        timer = new AnimationTimer() {
+            boolean num1Spawned = false;
+
+            @Override
+            public void handle(long now) {
+                gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
+                if (!num1Spawned) {
+                    double randomX = Math.random() * (canvas.getWidth() - 30);
+                    Num1 num1 = (Num1) factory.createProduct("num1", randomX, -30);
+                    num1List.add(num1);
+                    num1Spawned = true;
+                }
+
+                for (int i = 0; i < num1List.size(); i++) {
+                    Num1 num1 = num1List.get(i);
+                    num1.update();
+                }
+            }
+        };
+        timer.start();
+    }
+}

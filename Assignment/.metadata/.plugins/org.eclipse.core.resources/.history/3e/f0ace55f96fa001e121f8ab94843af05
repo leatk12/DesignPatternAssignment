@@ -1,0 +1,164 @@
+package Assignment.Game;
+
+import javafx.animation.AnimationTimer;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import java.util.ArrayList;
+import java.util.Random;
+
+public class Game extends Application {
+
+    private static final int TILE_SIZE = 40;
+    private static final int NUM_TILES_X = 20;
+    private static final int NUM_TILES_Y = 15;
+    private int[][] maze = new int[NUM_TILES_X][NUM_TILES_Y];
+
+    Pane root;
+    Scene scene;
+    Canvas canvas;
+    GraphicsContext gc;
+    AnimationTimer timer;
+    Factory factory;
+    ArrayList<Num1> num1List = new ArrayList<>();
+    Player player;
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        root = new Pane();
+        scene = new Scene(root, 800, 600);
+        canvas = new Canvas(800, 600);
+        gc = canvas.getGraphicsContext2D();
+        primaryStage.setScene(scene);
+
+        primaryStage.show();
+
+        generateMap(root);
+        Point start = findStartPosition();
+        player = Player.getInstance(start.x, start.y, gc);
+
+        root.getChildren().add(canvas);
+        gc.setFill(Color.BLACK);
+        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
+        factory = new Factory(gc);
+
+        timer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+                // Game update logic here
+                player.update();
+            }
+        };
+        timer.start();
+
+        setupKeyControls();
+    }
+
+    private void setupKeyControls() {
+        scene.setOnKeyPressed((KeyEvent e) -> {
+            switch (e.getCode()) {
+                case LEFT:
+                    player.moveLeftIfPossible();
+                    break;
+                case RIGHT:
+                    player.moveRightIfPossible();
+                    break;
+                case UP:
+                    player.moveUpIfPossible();
+                    break;
+                case DOWN:
+                    player.moveDownIfPossible();
+                    break;
+            }
+        });
+    }
+
+    private Point findStartPosition() {
+        Random rand = new Random();
+        int startX, startY;
+        do {
+            startX = rand.nextInt(NUM_TILES_X);
+            startY = rand.nextInt(NUM_TILES_Y);
+        } while (maze[startX][startY] != 0); // Ensure it's a path
+
+        return new Point(startX * TILE_SIZE + TILE_SIZE / 2, startY * TILE_SIZE + TILE_SIZE / 2);
+    }
+
+    private void generateMap(Pane root) {
+        for (int i = 0; i < NUM_TILES_X; i++) {
+            for (int j = 0; j < NUM_TILES_Y; j++) {
+                maze[i][j] = 1;  // Assume wall
+            }
+        }
+
+        Random rand = new Random();
+        int startX = rand.nextInt(NUM_TILES_X);
+        int startY = rand.nextInt(NUM_TILES_Y);
+        maze[startX][startY] = 0;  // Starting point
+
+        ArrayList<int[]> walls = new ArrayList<>();
+        addWalls(startX, startY, walls);
+
+        while (!walls.isEmpty()) {
+            int[] wall = walls.remove(rand.nextInt(walls.size()));
+            int x = wall[0];
+            int y = wall[1];
+
+            if (tryToCreatePath(x, y, walls)) {
+                maze[x][y] = 0;
+            }
+        }
+
+        drawMaze(root);
+    }
+
+    private void addWalls(int x, int y, ArrayList<int[]> walls) {
+        int[] dx = {-1, 1, 0, 0};
+        int[] dy = {0, 0, -1, 1};
+        for (int i = 0; i < 4; i++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+            if (nx >= 0 && nx < NUM_TILES_X && ny >= 0 && ny < NUM_TILES_Y && maze[nx][ny] == 1) {
+                walls.add(new int[]{nx, ny});
+            }
+        }
+    }
+
+    private boolean tryToCreatePath(int x, int y, ArrayList<int[]> walls) {
+        int[] dx = {-1, 1, 0, 0};
+        int[] dy = {0, 0, -1, 1};
+        int paths = 0;
+        for (int i = 0; i < 4; i++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+            if (nx >= 0 && nx < NUM_TILES_X && ny >= 0 && ny < NUM_TILES_Y && maze[nx][ny] == 0) {
+                paths++;
+                if (paths > 1) return false;
+            }
+        }
+        return paths == 1;
+    }
+
+    private void drawMaze(Pane root) {
+        for (int ix = 0; ix < NUM_TILES_X; ix++) {
+            for (int jy = 0; jy < NUM_TILES_Y; jy++) {
+                Rectangle tile = new Rectangle(ix * TILE_SIZE, jy * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                tile.setFill(maze[ix][jy] == 1 ? Color.DARKSLATEBLUE : Color.BLACK);
+                root.getChildren().add(tile);
+            }
+        }
+    }
+}

@@ -1,0 +1,52 @@
+package Assignment.Game;
+
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+
+public class GameObject {
+    protected Image img;
+    protected double x, y;
+    protected GraphicsContext gc;
+    protected GameContext gameContext;
+
+    protected double speedX = 8;
+    protected double speedY = 8;
+
+    public GameObject(double x, double y, GraphicsContext gc, GameContext gameContext) {
+        this.x = x;
+        this.y = y;
+        this.gc = gc;
+        this.gameContext = gameContext;
+    }
+
+    public void update() {
+        if (img != null) {
+            gc.drawImage(img, x, y, 50, 50);
+        }
+    }
+
+    // Movement methods that check for walls before moving
+    public void moveLeft() {
+        if (!GameContext.isWall(x - speedX, y)) {
+            x -= speedX;
+        }
+    }
+
+    public void moveRight() {
+        if (!GameContext.isWall(x + speedX, y)) {
+            x += speedX;
+        }
+    }
+
+    public void moveUp() {
+        if (!GameContext.isWall(x, y - speedY)) {
+            y -= speedY;
+        }
+    }
+
+    public void moveDown() {
+        if (!GameContext.isWall(x, y + speedY)) {
+            y += speedY;
+        }
+    }
+}

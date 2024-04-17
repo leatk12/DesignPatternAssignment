@@ -1,0 +1,40 @@
+package Assignment.Game;
+
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+
+public class Num1 extends GameObject{
+
+	private static final int TILE_SIZE = 40;
+
+	 public Num1(double centerX, double centerY, double tileSize, GraphicsContext gc) {
+	        // Adjust the position so that the center aligns with the sprite center
+	        super(centerX, centerY, tileSize, tileSize, gc);
+	        // Load the image
+	        img = new Image(Num1.class.getResource("num1.png").toExternalForm());
+	        update();
+	    }
+	
+	
+	public void update()  {
+		
+		
+		super.update();
+	}
+	
+	public double getX()  {
+		return x;
+	}
+
+	
+	public double getY()  {
+		return y;
+	}
+	
+	
+	
+	@Override
+    public void updateBehavior() {
+        // Specific behavior for Num1, if any
+    }
+}

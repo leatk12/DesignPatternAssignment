@@ -1,0 +1,83 @@
+package Assignment.Game;
+
+import javafx.geometry.Bounds;
+import javafx.scene.Node;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+
+public class GameObject {
+	protected Image img;
+	protected double x, y;
+	protected GraphicsContext gc;
+	protected double width;
+	protected double height;
+	
+	protected double speedX = 8;
+	protected double speedY = 8;
+	
+	
+	public GameObject(double x, double y, double width, double height, GraphicsContext gc)  {
+		super();
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+		this.gc = gc;
+	}
+	
+	public void update()  {
+		if(img!=null)
+			gc.drawImage(img, x - width / 2, y - height / 2, width, height);
+	}
+	
+	//
+	public void moveEnemy()  {
+		
+	}
+	
+	public void checkCollision()  {
+		
+	}
+	
+	
+	
+	
+	//Methods which controls the movement of the player
+	public void moveLeft()  {
+		if (!isWall(x - speedX - img.getWidth() /2, y))  {
+		x -= speedX;
+		}
+	}
+	
+	public void moveRight()  {
+		if (!isWall(x - speedX - img.getWidth() / 2, y))  {
+		x += speedX;
+		}
+	}
+	
+	public void moveUp()  {
+		if (!isWall(x, y - speedY - img.getHeight() / 2))  {
+		y -= speedY;
+		}
+	}
+	
+	public void moveDown()  {
+		if (!isWall(x, y + speedY +img.getHeight() / 2))  {
+		y += speedY;
+		}
+	}
+	
+	protected boolean isWall(double newX, double newY)  {
+		int gridX = (int)  (newX / Game.getTileSize());
+		int gridY = (int) (newY / Game.getTileSize());
+		
+		
+		return Game.getMaze()[gridX][gridY] == 1;
+	}
+	
+
+	
+
+	
+
+}

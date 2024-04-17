@@ -1,0 +1,61 @@
+package Assignment.Game;
+
+import javafx.geometry.Bounds;
+import javafx.scene.Node;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+
+public class GameObject {
+	protected Image img;
+	protected double x, y;
+	protected GraphicsContext gc;
+	
+	private double speedX = 8;
+	private double speedY = 8;
+	
+	
+	public GameObject(double x, double y, GraphicsContext gc)  {
+		super();
+		this.x = x;
+		this.y = y;
+		this.gc = gc;
+	}
+	
+	public void update()  {
+		if(img!=null)
+			gc.drawImage(img, x, y, 60, 60);
+	}
+	
+	//
+	public void moveEnemy()  {
+		
+	}
+	
+	public void checkCollision()  {
+		
+	}
+	
+	
+	//Methods which controls the movement of the player
+	public void moveLeft()  {
+		x -= speedX;
+	}
+	
+	public void moveRight()  {
+		x += speedX;
+	}
+	
+	public void moveUp()  {
+		y -= speedY;
+	}
+	
+	public void moveDown()  {
+		y += speedY;
+	}
+	
+
+	
+
+	
+
+}
