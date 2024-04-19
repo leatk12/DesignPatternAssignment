@@ -1,0 +1,281 @@
+package Assignment.Game;
+
+import javafx.animation.AnimationTimer;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
+
+import javafx.scene.input.KeyEvent;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+public class Game extends Application {
+
+    private static final int TILE_SIZE = 40;
+    private static final int NUM_TILES_X = 20;
+    private static final int NUM_TILES_Y = 15;
+    private static final int NUM_NUM1_INSTANCES = 10;
+
+    // Array holding the tiles
+    // 0 is a path and 1 is a wall
+    private static int[][] maze = new int[NUM_TILES_X][NUM_TILES_Y];
+
+    //Root pane for the scene
+    Pane root;
+    //Scene for the game
+    Scene scene;
+    //Canvas for holding the game elements
+    Canvas canvas;
+    //Graphics context for drawing operations
+    GraphicsContext gc;
+
+    //The timer for the game loop
+    AnimationTimer timer;
+    //The factory for creating game objects
+    Factory factory;
+    //An ArrayList which holds Num1 instances
+    ArrayList<Num1> num1List = new ArrayList<>();
+
+    //The player object for the game
+    Player player;
+
+    //The main method which is used to start the application
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    //The start method for the application
+   
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        //Creating instances of the root pane, scene, canvas and graphics context
+        root = new Pane();
+        scene = new Scene(root, 800, 600);
+        canvas = new Canvas(800, 600);
+        gc = canvas.getGraphicsContext2D();
+        primaryStage.setScene(scene);
+        primaryStage.show();
+
+        //Call to the generateMap() method to create the game map
+        generateMap();
+
+        // Calculate the initial position of the player to ensure it spawns on a path tile
+        double playerInitialX, playerInitialY;
+        do {
+            int randomX = (int) (Math.random() * NUM_TILES_X);
+            int randomY = (int) (Math.random() * NUM_TILES_Y);
+            playerInitialX = randomX * TILE_SIZE + TILE_SIZE / 2;
+            playerInitialY = randomY * TILE_SIZE + TILE_SIZE / 2;
+        } while (!isValidSpawnPosition(playerInitialX, playerInitialY));
+
+        //Initialising the object which will represent the player
+        player = Player.getInstance(this, gc);
+
+        //Adding the canvas to the root pane
+        root.getChildren().add(canvas);
+
+        //Fill the canvas with a black background
+        gc.setFill(Color.BLACK);
+        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
+        //Create an instance of the factory class used to create game objects
+        factory = new Factory(gc);
+
+      //Spawn instances of the Num1 class
+        for (int i = 0; i < NUM_NUM1_INSTANCES; i++) {
+            double posX, posY;
+            do {
+                // Generate random tile indices
+                int randomX = (int) (Math.random() * NUM_TILES_X);
+                int randomY = (int) (Math.random() * NUM_TILES_Y);
+                // Calculate the position in the center of the tile
+                posX = randomX * TILE_SIZE + TILE_SIZE / 2 - 15; // Subtract half of player's width
+                posY = randomY * TILE_SIZE + TILE_SIZE / 2 - 20; // Subtract half of player's height
+            } while (!isValidSpawnPosition(posX, posY));
+
+            // Spawn Num1 instance at the center of the tile
+            Num1 num1 = (Num1) factory.createProduct("num1", posX, posY, TILE_SIZE);
+            num1List.add(num1);
+        }
+
+        //Initialise and start the game loop timer
+        timer = new AnimationTimer() {
+            long lastSpawnTime = 0;
+
+            @Override
+            public void handle(long now) {
+                //Clear the canvas
+                gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
+                //Update the Num1 instances
+                for (int i = 0; i< num1List.size(); i++)  {
+                    Num1 num1 = num1List.get(i);
+                    num1.update();
+                }
+
+                //Update the player instance
+                player.update();
+            }
+        };
+        timer.start();
+
+
+        //DEvent handler responsible for key presses
+        scene.setOnKeyPressed((KeyEvent e) -> {
+            switch (e.getCode()) {
+                case LEFT:
+                    player.moveLeft();
+                    break;
+                case RIGHT:
+                    player.moveRight();
+                    break;
+                case UP:
+                    player.moveUp();
+                    break;
+                case DOWN:
+                    player.moveDown();
+                    break;
+                default:
+                    break;
+
+            }
+        });
+    }
+
+
+    //A method which generates the game map
+    private void generateMap() {
+        // Initialise the maze grid with all walls
+        for (int i = 0; i < NUM_TILES_X; i++) {
+            for (int j = 0; j < NUM_TILES_Y; j++) {
+                // 1 indicates a wall
+                maze[i][j] = 1;
+            }
+        }
+
+        // Random starting point for the maze generation
+        Random rand = new Random();
+        int startX = rand.nextInt(NUM_TILES_X);
+        int startY = rand.nextInt(NUM_TILES_Y);
+        // 0 indicates a path
+        maze[startX][startY] = 0;
+
+        // Direction vectors for moving inside the grid (up, down, left, right)
+        int[] dX = {-1, 1, 0, 0};
+        int[] dY = {0, 0, -1, 1};
+
+        // ArrayList to store the walls which are potential paths
+        ArrayList<int[]> walls = new ArrayList<>();
+        addWalls(startX, startY, walls, dX, dY);
+
+
+        //Generate the maze using the depth-first search algorithm
+        while (!walls.isEmpty()) {
+            int[] wall = walls.remove(rand.nextInt(walls.size()));
+            int x = wall[0];
+            int y = wall[1];
+
+            // Test whether we can create a path by removing this wall
+            int cellsWithPaths = 0;
+            // To store the cell that has a path already
+            int[] cell = {-1, -1};
+            for (int k = 0; k < 4; k++) {
+                int nx = x + dX[k];
+                int ny = y + dY[k];
+                // Ensure the cell is within bounds and check if it's already a path
+                if (nx >= 0 && nx < NUM_TILES_X && ny >= 0 && ny < NUM_TILES_Y && maze[nx][ny] == 0) {
+                    cellsWithPaths++;
+                    if (cellsWithPaths == 1) {
+                        cell[0] = nx;
+                        cell[1] = ny;
+                    } else {
+                        break;
+                    }
+                }
+            }
+
+            // Only one adjacent cell is a path
+            if (cellsWithPaths == 1) {
+                // Convert the wall to a path
+                maze[x][y] = 0;
+                addWalls(x, y, walls, dX, dY);
+            }
+        }
+
+        // Draw the generated maze
+        for (int ix = 0; ix < NUM_TILES_X; ix++) {
+            for (int jy = 0; jy < NUM_TILES_Y; jy++) {
+                Rectangle tile = new Rectangle(ix * TILE_SIZE, jy * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                tile.setFill(maze[ix][jy] == 1 ? Color.DARKSLATEBLUE : Color.BLACK);
+                root.getChildren().add(tile);
+            }
+        }
+    }
+
+
+    //A method which adds walls to the wall list
+    private void addWalls(int x, int y, ArrayList<int[]> walls, int[] dX, int[] dY) {
+        for (int i = 0; i < 4; i++) {
+            int nx = x + dX[i];
+            int ny = y + dY[i];
+            if (nx >= 0 && nx < NUM_TILES_X && ny >= 0 && ny < NUM_TILES_Y && maze[nx][ny] == 1) {
+                walls.add(new int[]{nx, ny});
+            }
+        }
+    }
+
+    //Getter methods
+
+    public static int getTileSize() {
+        return TILE_SIZE;
+    }
+
+    public static int getNumTilesX() {
+        return NUM_TILES_X;
+    }
+
+    public static int getNumTilesY() {
+        return NUM_TILES_Y;
+    }
+
+    public static int[][] getMaze() {
+        return maze;
+    }
+
+
+    //A method which checks whether a spawn point is valid
+    public boolean isValidSpawnPosition(double posX, double posY) {
+        int gridX = (int) (posX / TILE_SIZE);
+        int gridY = (int) (posY / TILE_SIZE);
+
+        // Check if the calculated indices are within bounds
+        if (gridX < 0 || gridX >= NUM_TILES_X || gridY < 0 || gridY >= NUM_TILES_Y) {
+            // Return false if out of bounds
+            return false;
+        }
+
+        // Check if the tile is a wall or if it's already occupied by another Num1
+        if (maze[gridX][gridY] == 1 || isOccupied(posX, posY)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    //A method which checks whether a position has already been occupied by a Num1 object
+    private boolean isOccupied(double posX, double posY) {
+        for (Num1 num1 : num1List) {
+            double distance = Math.sqrt(Math.pow((num1.getX() - posX), 2) + Math.pow((num1.getY() - posY), 2));
+            if (distance < 3 * TILE_SIZE) {
+                return true;
+            }
+        }
+        return false;
+    }
+}

@@ -11,46 +11,49 @@ public class Num1 extends GameObject {
 
     private Direction currentDirection = Direction.NONE;
     private boolean initialisedDirection = false;
+	private double pivotX;
+	private double pivotY;
 
     private static final int TILE_SIZE = 40;
 
     public Num1(double centerX, double centerY, double tileSize, GraphicsContext gc) {
         super(centerX, centerY, tileSize, tileSize, gc);
         img = new Image(Num1.class.getResource("num1.png").toExternalForm());
+        this.pivotX = tileSize / 2; // Set pivot point to center of the sprite
+        this.pivotY = tileSize / 2; // Set pivot point to center of the sprite
         update();
-        this.speedX = 1;
-        this.speedY = 1;
+        this.speedX = 1; // Set initial speed
+        this.speedY = 1; // Set initial speed
+        initialiseDirection();
     }
 
     public void update() {
         if (!initialisedDirection) {
             initialiseDirection();
         } else {
-            updateBehaviour();
+            enemyMovement();
         }
         super.update();
     }
 
     private void initialiseDirection() {
         // Calculate the grid coordinates based on the current position
-        int gridX = (int) (x / Game.getTileSize());
-        int gridY = (int) (y / Game.getTileSize());
+        int gridX = (int) (x / TILE_SIZE);
+        int gridY = (int) (y / TILE_SIZE);
 
-        // Debugging output to check the grid coordinates
-        System.out.println("Grid Coordinates: (" + gridX + ", " + gridY + ")");
-
+        
         // Check the availability of directions with at least 2 consecutive path tiles
         if (hasConsecutivePathTiles(gridX, gridY, 0, 1)) {
-            System.out.println("Direction: UP");
+           
             currentDirection = Direction.UP;
         } else if (hasConsecutivePathTiles(gridX, gridY, 0, -1)) {
-            System.out.println("Direction: DOWN");
+            
             currentDirection = Direction.DOWN;
         } else if (hasConsecutivePathTiles(gridX, gridY, -1, 0)) {
-            System.out.println("Direction: LEFT");
+            
             currentDirection = Direction.LEFT;
         } else if (hasConsecutivePathTiles(gridX, gridY, 1, 0)) {
-            System.out.println("Direction: RIGHT");
+            
             currentDirection = Direction.RIGHT;
         }
 
@@ -71,40 +74,73 @@ public class Num1 extends GameObject {
         return isPath(nextGridX, nextGridY) && isPath(nextNextGridX, nextNextGridY);
     }
 
-    private void updateBehaviour() {
+    public void moveDown() {
+        double newY = y + speedY; // Update y coordinate by adding speedY
+        if (!isWall(x, newY)) {
+            y = newY; // Update y only if the new position is not a wall
+        }
+    }
+
+    public void moveUp() {
+        double newY = y - speedY; // Update y coordinate by subtracting speedY
+        if (!isWall(x, newY)) {
+            y = newY; // Update y only if the new position is not a wall
+        }
+    }
+
+    public void moveLeft() {
+        double newX = x - speedX; // Update x coordinate by subtracting speedX
+        if (!isWall(newX, y)) {
+            x = newX; // Update x only if the new position is not a wall
+        }
+    }
+
+    public void moveRight() {
+        double newX = x + speedX; // Update x coordinate by adding speedX
+        if (!isWall(newX, y)) {
+            x = newX; // Update x only if the new position is not a wall
+        }
+    }
+
+    public void enemyMovement() {
         switch (currentDirection) {
             case DOWN:
-                if (!isWall(x, y + speedY)) {
-                    moveDown();
-                } else {
+                if (isWall(x, y + speedY)) {
                     currentDirection = Direction.UP;
+                } else {
+                    moveDown();
                 }
                 break;
             case UP:
-                if (!isWall(x, y - speedY)) {
-                    moveUp();
+                if (isWall(x, y - speedY) || y <= 0) {
+                    currentDirection = Direction.DOWN; // Change direction if reaching the top edge
                 } else {
-                    currentDirection = Direction.DOWN;
+                    moveUp();
                 }
                 break;
             case LEFT:
-                if (!isWall(x - speedX, y)) {
-                    moveLeft();
-                } else {
+                if (isWall(x - speedX, y)) {
                     currentDirection = Direction.RIGHT;
+                } else if (x <= 0) {
+                    currentDirection = Direction.RIGHT; // Change direction if reaching the left edge
+                } else {
+                    moveLeft();
                 }
                 break;
             case RIGHT:
-                if (!isWall(x + speedX, y)) {
-                    moveRight();
-                } else {
+                if (isWall(x + speedX, y)) {
                     currentDirection = Direction.LEFT;
+                } else if (x + width >= gc.getCanvas().getWidth()) {
+                    currentDirection = Direction.LEFT; // Change direction if reaching the right edge
+                } else {
+                    moveRight();
                 }
                 break;
             default:
                 break;
         }
     }
+
 
     public double getX() {
         return x;

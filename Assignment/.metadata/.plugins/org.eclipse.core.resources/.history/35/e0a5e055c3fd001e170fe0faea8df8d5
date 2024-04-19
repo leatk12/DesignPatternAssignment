@@ -1,0 +1,18 @@
+package Assignment.Game;
+
+public static class pow0Bullet implements Bullet {
+
+	private GameObject gameObject;
+	
+	public pow0Bullet(GameObject gameObject)  {
+		this.gameObject = gameObject;
+	}
+	
+	@Override
+	public void shoot() {
+		// TODO Auto-generated method stub
+		
+		
+	}
+
+}

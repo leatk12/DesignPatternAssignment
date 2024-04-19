@@ -1,0 +1,17 @@
+package Assignment.Game;
+
+public class Factory implements FactoryIF {
+    @Override
+    public GameObject createProduct(String discrim, double x, double y, double tileSize) {
+        if (discrim.equals("num1")) {
+            return new Num1(x, y, tileSize);
+        } else if (discrim.equals("num2")) {
+            return null;
+        } else if (discrim.equals("num4")) {
+            return null;
+        } else if (discrim.equals("num8")) {
+            return null;
+        }
+        return null;
+    }
+}

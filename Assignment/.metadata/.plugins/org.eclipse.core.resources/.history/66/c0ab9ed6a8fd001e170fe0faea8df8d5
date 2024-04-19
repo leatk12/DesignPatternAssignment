@@ -1,0 +1,74 @@
+package Assignment.Game;
+
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+
+public class GameObject {
+    protected Image img;
+    protected double x, y;
+    protected GraphicsContext gc;
+    protected double width;
+    protected double height;
+
+    protected double speedX = 8;
+    protected double speedY = 8;
+
+    protected GameObjectBehaviour behaviour;
+
+    public GameObject(double x, double y, double width, double height, GraphicsContext gc) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.gc = gc;
+        behaviour = new DefaultGameObjectBehaviour(); // Initialise with default behaviour
+    }
+
+    public void update() {
+        if (img != null)
+            gc.drawImage(img, x - width / 2, y - height / 2, width, height);
+        behaviour.updateBehaviour(); // Delegate behaviour
+    }
+
+    public void moveLeft() {
+        if (!isWall(x - speedX, y)) {
+            x -= speedX;
+        }
+    }
+
+    public void moveRight() {
+        if (!isWall(x + speedX, y)) {
+            x += speedX;
+        }
+    }
+
+    public void moveUp() {
+        if (!isWall(x, y - speedY)) {
+            y -= speedY;
+        }
+    }
+
+    public void moveDown() {
+        if (!isWall(x, y + speedY)) {
+            y += speedY;
+        }
+    }
+
+    protected boolean isWall(double newX, double newY) {
+        int gridX = (int) (newX / Game.getTileSize());
+        int gridY = (int) (newY / Game.getTileSize());
+
+        if (gridX < 0 || gridX >= Game.getNumTilesX() || gridY < 0 || gridY >= Game.getNumTilesY()) {
+            return true; // If out of bounds, consider it as a wall
+        }
+
+        return Game.getMaze()[gridX][gridY] == 1;
+    }
+
+    private static class DefaultGameObjectBehaviour implements GameObjectBehaviour {
+        @Override
+        public void updateBehaviour() {
+            // Default behaviour is to do nothing
+        }
+    }
+}

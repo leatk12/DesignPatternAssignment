@@ -1,0 +1,53 @@
+package Assignment.Game;
+
+import javafx.scene.canvas.GraphicsContext;
+
+public class Pow0Bullet extends GameObject implements Bullet {
+	
+	private String direction;
+	
+	public Pow0Bullet(double x, double y, double width, double height, GraphicsContext gc) {
+        super(x, y, width, height, gc);
+    }
+	
+	public void setDirection(String direction)  {
+		this.direction = direction;
+	}
+
+	@Override
+	public void shoot() {
+		// TODO Auto-generated method stub
+		switch (direction)  {
+		case "LEFT":
+			x -= speedX;
+			break;
+		case "RIGHT":
+			x += speedX;
+			break;
+		case "UP":
+			y -= speedY;
+			break;
+		case "DOWN":
+			y += speedY;
+			break;
+			
+		}
+	}
+	
+	
+	public void render()  {
+		if (img != null)  
+			gc.drawImage(img,  x - width / 2,  y - height / 2, width, height);
+	}
+
+	public int getY() {
+		// TODO Auto-generated method stub
+		return y;
+	}
+
+	public int getX() {
+		// TODO Auto-generated method stub
+		return x;
+	}
+
+}
