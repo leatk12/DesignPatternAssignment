@@ -90,4 +90,14 @@ public class GameObject {
 			
 		}
     }
+
+	  void setDirection(String lastDirection) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void render() {
+		// TODO Auto-generated method stub
+		
+	}
 }
