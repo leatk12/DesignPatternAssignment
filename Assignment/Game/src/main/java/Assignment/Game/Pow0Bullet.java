@@ -8,7 +8,8 @@ public class Pow0Bullet extends GameObject implements Bullet {
 	private String direction;
 	
 	public Pow0Bullet(double x, double y, double width, double height, GraphicsContext gc) {
-        super(x, y, width, height, gc);
+        super(null, x, y, width, height, gc); // Assuming 'Game game' is not required here based on your current setup
+        // Initialise the bullet with an image or other properties
         this.img = new Image(Pow0Bullet.class.getResource("Pow0Bullet.png").toExternalForm());
     }
 	

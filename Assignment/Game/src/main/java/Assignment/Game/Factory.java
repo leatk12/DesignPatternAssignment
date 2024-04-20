@@ -9,10 +9,10 @@ public class Factory implements FactoryIF{
 		
 
 	@Override
-	public GameObject createProduct(String discrim, double x, double y, double tileSize) {
+	public GameObject createProduct(String discrim, Game game, double x, double y, double tileSize) {
 		// TODO Auto-generated method stub
 		if(discrim.equals("num1"))
-			return new Num1(x, y, tileSize, gc);
+			return new Num1(game, x, y, tileSize, this.gc);
 		else if(discrim.equals("num2"))
 			return null;
 		else if(discrim.equals("num4"))

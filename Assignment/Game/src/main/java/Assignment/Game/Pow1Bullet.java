@@ -8,9 +8,9 @@ public class Pow1Bullet extends GameObject implements Bullet {
 	private String direction;
 	
 	
-	public Pow1Bullet(double x, double y, double width, double height, GraphicsContext gc) {
-        super(x, y, width, height, gc);
-        this.img = new Image(Pow0Bullet.class.getResource("Pow1Bullet.png").toExternalForm());
+	public Pow1Bullet( double x, double y, double width, double height, GraphicsContext gc) {
+        super(null, x, y, width, height, gc);
+        this.img = new Image(Pow1Bullet.class.getResource("Pow1Bullet.png").toExternalForm());
 
 }
 	

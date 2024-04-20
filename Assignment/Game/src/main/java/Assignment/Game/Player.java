@@ -9,8 +9,8 @@ private String lastDirection = "RIGHT";
 	
     private static Player instance;
 
-    private Player(double x, double y, double width, double height, GraphicsContext gc) {
-        super(x, y, width, height,  gc);
+    private Player(Game game, double x, double y, double width, double height, GraphicsContext gc) {
+        super(game, x, y, width, height,  gc);
         this.name = "default";
         this.score = 0;
         // TODO Auto-generated constructor stub
@@ -36,7 +36,7 @@ private String lastDirection = "RIGHT";
             y = tileY * Game.getTileSize() + Game.getTileSize() / 2;
 
             // Create the player instance
-            instance = new Player(x, y, 40, 40, gc);
+            instance = new Player(game, x, y, 40, 40, gc);
         }
         return instance;
     }

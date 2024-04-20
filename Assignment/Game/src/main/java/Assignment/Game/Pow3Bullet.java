@@ -8,8 +8,8 @@ public class Pow3Bullet extends GameObject implements Bullet {
 	private String direction;
 	
 	public Pow3Bullet(double x, double y, double width, double height, GraphicsContext gc) {
-        super(x, y, width, height, gc);
-        this.img = new Image(Pow0Bullet.class.getResource("Pow3Bullet.png").toExternalForm());
+        super(null, x, y, width, height, gc);
+        this.img = new Image(Pow3Bullet.class.getResource("Pow3Bullet.png").toExternalForm());
 }
 
 	public void setDirection(String direction)  {
