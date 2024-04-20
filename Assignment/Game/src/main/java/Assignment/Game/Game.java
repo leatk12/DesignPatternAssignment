@@ -41,13 +41,15 @@ public class Game extends Application {
     //The factory for creating game objects
     Factory factory;
     //An ArrayList which holds Num1 instances
-    ArrayList<Num1> num1List = new ArrayList<>();
+    ArrayList<Enemy> enemyList = new ArrayList<>();
     
     //ArrayList to store instances of Pow0Bullet
-    private ArrayList<Pow0Bullet> bullets = new ArrayList<>();
+    private ArrayList<Bullet> bullets = new ArrayList<>();
 
     //The player object for the game
     Player player;
+    
+    private Class<? extends Bullet> currentBulletType = Pow0Bullet.class;
 
     //The main method which is used to start the application
     public static void main(String[] args) {
@@ -106,7 +108,7 @@ public class Game extends Application {
 
             // Spawn Num1 instance at the center of the tile
             Num1 num1 = (Num1) factory.createProduct("num1", posX, posY, TILE_SIZE);
-            num1List.add(num1);
+            enemyList.add(num1);
         }
 
         //Initialise and start the game loop timer
@@ -119,24 +121,24 @@ public class Game extends Application {
                 gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
              // Update the Num1 instances and perform enemy movement
-                for (Num1 num1 : num1List) {
-                    num1.update();
-                    num1.enemyMovement();
+                for (Enemy enemy : enemyList) {
+                    enemy.update();
+                    enemy.enemyMovement();
                 }
 
                 //Update the player instance
                 player.update();
                 
-                //Update and render bullets
-                Iterator<Pow0Bullet> bulletIterator = bullets.iterator();
-                while (bulletIterator.hasNext())  {
-                	Pow0Bullet bullet = bulletIterator.next();
-                	bullet.shoot();  //Update a bullets position based on its direction
-                	if(isBulletOffScreen(bullet))  {
-                		bulletIterator.remove();  //Remove the bullet if it moves past the edge of the canvas
-                	} else {
-                		bullet.render();  //Render the bullet
-                	}
+             // Update and render each bullet
+                Iterator<Bullet> bulletIterator = bullets.iterator();
+                while (bulletIterator.hasNext()) {
+                    Bullet bullet = bulletIterator.next();
+                    bullet.shoot();  // Update bullet's position based on its direction
+                    if (isBulletOffScreen(bullet)) {
+                        bulletIterator.remove();  // Remove the bullet if it moves past the edge of the canvas
+                    } else {
+                        ((GameObject) bullet).render();  // Cast to GameObject to call render (ensure all Bullets can do this)
+                    }
                 }
             }
         };
@@ -145,28 +147,56 @@ public class Game extends Application {
 
         //DEvent handler responsible for key presses
         scene.setOnKeyPressed((KeyEvent e) -> {
+            // Use switch-case to distinguish between key codes
             switch (e.getCode()) {
+                // Map Numpad keys explicitly
+                case NUMPAD0:
+                    currentBulletType = Pow0Bullet.class;
+                    System.out.println("Switched to Pow0Bullet");
+                    break;
+                case NUMPAD1:
+                    currentBulletType = Pow1Bullet.class;
+                    System.out.println("Switched to Pow1Bullet");
+                    break;
+                case NUMPAD2:
+                    currentBulletType = Pow2Bullet.class;
+                    System.out.println("Switched to Pow2Bullet");
+                    break;
+                case NUMPAD3:
+                    currentBulletType = Pow3Bullet.class;
+                    System.out.println("Switched to Pow3Bullet");
+                    break;
+
+                // Arrow keys for movement
                 case LEFT:
+                case KP_LEFT: // KP_LEFT is for keypad left with Num Lock off
                     player.moveLeft();
                     break;
                 case RIGHT:
+                case KP_RIGHT: // KP_RIGHT is for keypad right with Num Lock off
                     player.moveRight();
                     break;
                 case UP:
+                case KP_UP: // KP_UP is for keypad up with Num Lock off
                     player.moveUp();
                     break;
                 case DOWN:
+                case KP_DOWN: // KP_DOWN is for keypad down with Num Lock off
                     player.moveDown();
                     break;
+
+                // Space for firing bullets
                 case SPACE:
-                	fireBullet();
-                	break;
-                default:
+                    fireBullet();
                     break;
 
+                default:
+                    break;
             }
         });
+        
     }
+
 
 
     //A method which generates the game map
@@ -290,8 +320,8 @@ public class Game extends Application {
 
     //A method which checks whether a position has already been occupied by a Num1 object
     private boolean isOccupied(double posX, double posY) {
-        for (Num1 num1 : num1List) {
-            double distance = Math.sqrt(Math.pow((num1.getX() - posX), 2) + Math.pow((num1.getY() - posY), 2));
+        for (Enemy enemy : enemyList) {
+            double distance = Math.sqrt(Math.pow((enemy.getX() - posX), 2) + Math.pow((enemy.getY() - posY), 2));
             if (distance < 3 * TILE_SIZE) {
                 return true;
             }
@@ -299,7 +329,7 @@ public class Game extends Application {
         return false;
     }
    
-    private boolean isBulletOffScreen(Pow0Bullet bullet)  {
+    private boolean isBulletOffScreen(Bullet bullet)  {
     	return bullet.getX() < 0 || bullet.getX() > canvas.getWidth()  || bullet.getY() < 0 || bullet.getY() > canvas.getHeight();
     }
     
@@ -310,9 +340,15 @@ public class Game extends Application {
         Bullet bullet = Bullet.builder()
                               .setPosition(bulletX, bulletY)
                               .setGraphicsContext(gc)
-                              .build(); // Make sure this method exists and returns a Bullet type.
-        ((Pow0Bullet) bullet).setDirection(player.getLastDirection());
-        bullets.add((Pow0Bullet) bullet);
+                              .setBulletType(currentBulletType)
+                              .build();
+
+        if (bullet != null) {
+            ((GameObject) bullet).setDirection(player.getLastDirection());  // Ensure all bullets can be treated as GameObjects
+            bullets.add(bullet);
+        } else {
+            System.err.println("Failed to create bullet instance.");
+        }
     }
     
 
