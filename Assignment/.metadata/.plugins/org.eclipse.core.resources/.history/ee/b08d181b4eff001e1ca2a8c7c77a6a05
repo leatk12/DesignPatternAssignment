@@ -1,5 +1,5 @@
 package Assignment.Game;
 
-public interface FactoryIF {
+public class Num4 {
 
 }
