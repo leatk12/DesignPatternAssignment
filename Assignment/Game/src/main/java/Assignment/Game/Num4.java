@@ -7,8 +7,8 @@ public class Num4 extends Enemy {
 
     private static final int TILE_SIZE = 40;
 
-    public Num4(double x, double y, double tileSize, GraphicsContext gc) {
-        super(x, y, tileSize, tileSize, gc);
+    public Num4(Game game, double x, double y, double tileSize, GraphicsContext gc) {
+        super(game, x, y, tileSize, tileSize, gc);
         img = new Image(Num1.class.getResource("num1.png").toExternalForm());
         speedX = 1;
         speedY = 1;
@@ -35,14 +35,14 @@ public class Num4 extends Enemy {
     }
 
 	@Override
-	protected double getX() {
+	public double getX() {
 		// TODO Auto-generated method stub
-		return 0;
+		return x;
 	}
 
 	@Override
-	protected double getY() {
+	public double getY() {
 		// TODO Auto-generated method stub
-		return 0;
+		return y;
 	}
 }

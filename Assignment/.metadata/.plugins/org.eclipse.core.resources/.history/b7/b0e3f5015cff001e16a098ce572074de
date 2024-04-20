@@ -1,0 +1,66 @@
+package Assignment.Game;
+
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+
+public abstract class Bullet {
+    protected double x, y;
+    protected double width, height;
+    protected GraphicsContext gc;
+    protected Image img;
+
+    protected Bullet(double x, double y, double width, double height, GraphicsContext gc) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.gc = gc;
+    }
+
+    public abstract void shoot();
+
+    public void render() {
+        if (img != null) {
+            gc.drawImage(img, x - width / 2, y - height / 2, width, height);
+        }
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    // Nested Builder Class
+    public static abstract class Builder<T extends Bullet, B extends Builder<T, B>> {
+        protected double x;
+        protected double y;
+        protected double width = 20;  // default width
+        protected double height = 20;  // default height
+        protected GraphicsContext gc;
+
+        public B setPosition(double x, double y) {
+            this.x = x;
+            this.y = y;
+            return self();
+        }
+
+        public B setGraphicsContext(GraphicsContext gc) {
+            this.gc = gc;
+            return self();
+        }
+
+        public B setSize(double width, double height) {
+            this.width = width;
+            this.height = height;
+            return self();
+        }
+
+        protected abstract T build();
+
+        // Subclasses must override this method to return "this"
+        protected abstract B self();
+    }
+}

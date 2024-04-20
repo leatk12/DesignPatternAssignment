@@ -16,4 +16,5 @@
     <fullyQualifiedTypeName name="javafx.scene.control.skin.TextInputControlSkin.Direction"/>
     <fullyQualifiedTypeName name="java.util.Iterator"/>
     <fullyQualifiedTypeName name="javafx.scene.image.Image"/>
+    <fullyQualifiedTypeName name="java.lang.reflect.Constructor"/>
 </qualifiedTypeNameHistroy>

@@ -107,7 +107,7 @@ public class Game extends Application {
             } while (!isValidSpawnPosition(posX, posY));
 
             // Spawn Num1 instance at the center of the tile
-            Num1 num1 = (Num1) factory.createProduct("num1", posX, posY, TILE_SIZE);
+            Num1 num1 = (Num1) factory.createProduct("num1",this, posX, posY, TILE_SIZE);
             enemyList.add(num1);
         }
 
@@ -129,15 +129,31 @@ public class Game extends Application {
                 //Update the player instance
                 player.update();
                 
+             
              // Update and render each bullet
                 Iterator<Bullet> bulletIterator = bullets.iterator();
                 while (bulletIterator.hasNext()) {
                     Bullet bullet = bulletIterator.next();
                     bullet.shoot();  // Update bullet's position based on its direction
-                    if (isBulletOffScreen(bullet)) {
-                        bulletIterator.remove();  // Remove the bullet if it moves past the edge of the canvas
+                    if (isBulletOffScreen(bullet) || isWall(bullet.getX(), bullet.getY())) {
+                        bulletIterator.remove();  // Remove the bullet if it collides or moves off screen
                     } else {
-                        ((GameObject) bullet).render();  // Cast to GameObject to call render (ensure all Bullets can do this)
+                        // Check for collisions with enemies
+                        boolean hitEnemy = false;
+                        Iterator<Enemy> enemyIterator = enemyList.iterator();
+                        while (enemyIterator.hasNext()) {
+                            Enemy enemy = enemyIterator.next();
+                            if (collidesWith(bullet, enemy)) {
+                                hitEnemy = true;
+                                enemyIterator.remove();  // Remove the enemy instance
+                                break;  // Stop checking if bullet hits any enemy
+                            }
+                        }
+                        if (hitEnemy) {
+                            bulletIterator.remove();  // Remove the bullet if it hits an enemy
+                        } else {
+                            ((GameObject) bullet).render();  // Continue to render if no collision
+                        }
                     }
                 }
             }
@@ -352,4 +368,35 @@ public class Game extends Application {
     }
     
 
+    protected boolean isWall(double newX, double newY) {
+        // Calculate the boundaries of the canvas
+        double canvasWidth = gc.getCanvas().getWidth();
+        double canvasHeight = gc.getCanvas().getHeight();
+
+        // Check if the new position is within the canvas boundaries
+        if (newX < 0 || newX >= canvasWidth || newY < 0 || newY >= canvasHeight) {
+            return true; // If out of bounds, consider it as a wall
+        }
+
+        // Check if the new position collides with any walls in the maze
+        int gridX = (int) (newX / Game.getTileSize());
+        int gridY = (int) (newY / Game.getTileSize());
+
+        if (gridX < 0 || gridX >= Game.getNumTilesX() || gridY < 0 || gridY >= Game.getNumTilesY()) {
+            return true; // If out of bounds, consider it as a wall
+        }
+
+        return Game.getMaze()[gridX][gridY] == 1;
+    }
+    
+    
+    private boolean collidesWith(Bullet bullet, Enemy enemy) {
+        // Check if the bounding boxes of bullet and enemy intersect
+        return bullet.getX() < enemy.getX() + enemy.getWidth() &&
+               bullet.getX() + bullet.getWidth() > enemy.getX() &&
+               bullet.getY() < enemy.getY() + enemy.getHeight() &&
+               bullet.getY() + bullet.getHeight() > enemy.getY();
+    }
+    
+    
 }

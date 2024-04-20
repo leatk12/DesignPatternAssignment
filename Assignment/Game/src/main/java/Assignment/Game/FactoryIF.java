@@ -2,6 +2,6 @@ package Assignment.Game;
 
 public interface FactoryIF {
     
-    GameObject createProduct(String discrim, double x, double y, double tileSize);
+    GameObject createProduct(String discrim, Game game, double x, double y, double tileSize);
 
 }  

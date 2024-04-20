@@ -12,8 +12,8 @@ public abstract class Enemy extends GameObject {
     protected Direction currentDirection = Direction.NONE;
     protected boolean directionInitialized = false;
 
-    public Enemy(double x, double y, double width, double height, GraphicsContext gc) {
-        super(x, y, width, height, gc);
+    public Enemy(Game game, double x, double y, double width, double height, GraphicsContext gc) {
+        super(game, x, y, width, height, gc);
     }
 
     @Override
@@ -31,7 +31,7 @@ public abstract class Enemy extends GameObject {
     @Override
     public void moveDown() {
         double newY = y + speedY;
-        if (!isWall(x, newY)) {
+        if (!game.isWall(x, newY)) {
             y = newY;
         }
     }
@@ -39,7 +39,7 @@ public abstract class Enemy extends GameObject {
     @Override
     public void moveUp() {
         double newY = y - speedY;
-        if (!isWall(x, newY)) {
+        if (!game.isWall(x, newY)) {
             y = newY;
         }
     }
@@ -47,7 +47,7 @@ public abstract class Enemy extends GameObject {
     @Override
     public void moveLeft() {
         double newX = x - speedX;
-        if (!isWall(newX, y)) {
+        if (!game.isWall(newX, y)) {
             x = newX;
         }
     }
@@ -55,7 +55,7 @@ public abstract class Enemy extends GameObject {
     @Override
     public void moveRight() {
         double newX = x + speedX;
-        if (!isWall(newX, y)) {
+        if (!game.isWall(newX, y)) {
             x = newX;
         }
     }
@@ -63,28 +63,28 @@ public abstract class Enemy extends GameObject {
     public void enemyMovement() {
         switch (currentDirection) {
             case DOWN:
-                if (isWall(x, y + speedY)) {
+                if (game.isWall(x, y + speedY)) {
                     currentDirection = Direction.UP;
                 } else {
                     moveDown();
                 }
                 break;
             case UP:
-                if (isWall(x, y - speedY)) {
+                if (game.isWall(x, y - speedY)) {
                     currentDirection = Direction.DOWN;
                 } else {
                     moveUp();
                 }
                 break;
             case LEFT:
-                if (isWall(x - speedX, y)) {
+                if (game.isWall(x - speedX, y)) {
                     currentDirection = Direction.RIGHT;
                 } else {
                     moveLeft();
                 }
                 break;
             case RIGHT:
-                if (isWall(x + speedX, y)) {
+                if (game.isWall(x + speedX, y)) {
                     currentDirection = Direction.LEFT;
                 } else {
                     moveRight();
@@ -110,7 +110,21 @@ public abstract class Enemy extends GameObject {
         return Game.getMaze()[gridX][gridY] == 0; // 0 represents a path
     }
 
-	protected abstract double getX();
+	public double getX()  {
+		return x;
+	}
 
-	protected abstract double getY();
+	public double getY()  {
+		return y;
+	}
+
+	public double getWidth() {
+		// TODO Auto-generated method stub
+		return width;
+	}
+
+	public double getHeight() {
+		// TODO Auto-generated method stub
+		return height;
+	}
 }
