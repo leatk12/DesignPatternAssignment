@@ -1,0 +1,59 @@
+package Assignment.Game;
+
+import javafx.scene.canvas.GraphicsContext;
+
+public interface Bullet {
+    void shoot();
+
+    static Builder builder() {
+        return new BulletBuilder();
+    }
+
+    interface Builder {
+        Builder setPosition(double x, double y);
+        Builder setGraphicsContext(GraphicsContext gc);
+        Builder setBulletType(Class<? extends Bullet> bulletType);  // Method to specify the bullet type
+        Bullet build();
+    }
+
+    class BulletBuilder implements Builder {
+        private double x;
+        private double y;
+        private GraphicsContext gc;
+        private Class<? extends Bullet> bulletType;  // Store the bullet type
+
+        @Override
+        public Builder setPosition(double x, double y) {
+            this.x = x;
+            this.y = y;
+            return this;
+        }
+
+        @Override
+        public Builder setGraphicsContext(GraphicsContext gc) {
+            this.gc = gc;
+            return this;
+        }
+
+        @Override
+        public Builder setBulletType(Class<? extends Bullet> bulletType) {
+            this.bulletType = bulletType;  // Set the bullet type dynamically
+            return this;
+        }
+
+        @Override
+        public Bullet build() {
+            if (bulletType != null) {
+                try {
+                    // Dynamically create an instance of the bullet type using reflection
+                    return bulletType.getConstructor(double.class, double.class, double.class, double.class, GraphicsContext.class)
+                                     .newInstance(x, y, 20, 20, gc);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;  // Handle exceptions or provide a default implementation
+                }
+            }
+            return null;  // Return null or a default type if not specified
+        }
+    }
+}
