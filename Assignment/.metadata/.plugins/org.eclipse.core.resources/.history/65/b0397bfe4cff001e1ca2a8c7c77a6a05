@@ -1,0 +1,67 @@
+package Assignment.Game;
+
+import javafx.scene.canvas.GraphicsContext;
+
+public abstract class Enemy extends GameObject {
+
+	public Enemy(double x, double y, double width, double height, GraphicsContext gc) {
+		super(x, y, width, height, gc);
+		// TODO Auto-generated constructor stub
+	}
+
+	
+	public void update()  {
+		
+	}
+	
+	
+	private void initialiseDirection()  {
+		
+	}
+	
+	
+	private boolean hasConsecutivePathTiles(int gridX, int gridY, int offsetX, int offsetY)  {
+		return false;
+		
+	} 
+	
+	 public void moveDown()  {
+		 
+	 }
+	 
+	 public void moveUp()  {
+		 
+	 }
+	 
+	 public void moveLeft()  {
+		 
+	 }
+	 
+	 public void moveRight()  {
+		 
+	 }
+	 
+	 public void enemyMovement()  {
+		 
+	 }
+	 
+	 public double getX()  {
+		return x;
+		 
+	 }
+	 
+	 public double getY() {
+	        return y;
+	    }
+	 
+	 protected boolean isWall(double posX, double posY)  {
+		return false;
+		 
+	 }
+	 
+	 private boolean isPath(int gridX, int gridY)  {
+		return false;
+		 
+	 }
+	
+}

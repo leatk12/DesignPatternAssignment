@@ -3,11 +3,11 @@ package Assignment.Game;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
-public class Num1 extends Enemy {
+public class Num4 extends Enemy {
 
     private static final int TILE_SIZE = 40;
 
-    public Num1(double x, double y, double tileSize, GraphicsContext gc) {
+    public Num4(double x, double y, double tileSize, GraphicsContext gc) {
         super(x, y, tileSize, tileSize, gc);
         img = new Image(Num1.class.getResource("num1.png").toExternalForm());
         speedX = 1;

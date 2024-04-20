@@ -41,7 +41,7 @@ public class Game extends Application {
     //The factory for creating game objects
     Factory factory;
     //An ArrayList which holds Num1 instances
-    ArrayList<Enemy> enemyList = new ArrayList<>();
+    ArrayList<Num1> num1List = new ArrayList<>();
     
     //ArrayList to store instances of Pow0Bullet
     private ArrayList<Bullet> bullets = new ArrayList<>();
@@ -108,7 +108,7 @@ public class Game extends Application {
 
             // Spawn Num1 instance at the center of the tile
             Num1 num1 = (Num1) factory.createProduct("num1", posX, posY, TILE_SIZE);
-            enemyList.add(num1);
+            num1List.add(num1);
         }
 
         //Initialise and start the game loop timer
@@ -121,9 +121,9 @@ public class Game extends Application {
                 gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
              // Update the Num1 instances and perform enemy movement
-                for (Enemy enemy : enemyList) {
-                    enemy.update();
-                    enemy.enemyMovement();
+                for (Num1 num1 : num1List) {
+                    num1.update();
+                    num1.enemyMovement();
                 }
 
                 //Update the player instance
@@ -320,8 +320,8 @@ public class Game extends Application {
 
     //A method which checks whether a position has already been occupied by a Num1 object
     private boolean isOccupied(double posX, double posY) {
-        for (Enemy enemy : enemyList) {
-            double distance = Math.sqrt(Math.pow((enemy.getX() - posX), 2) + Math.pow((enemy.getY() - posY), 2));
+        for (Num1 num1 : num1List) {
+            double distance = Math.sqrt(Math.pow((num1.getX() - posX), 2) + Math.pow((num1.getY() - posY), 2));
             if (distance < 3 * TILE_SIZE) {
                 return true;
             }

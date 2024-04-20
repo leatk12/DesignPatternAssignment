@@ -1,0 +1,176 @@
+package Assignment.Game;
+
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+
+public class Num1 extends GameObject {
+
+    private enum Direction {
+        LEFT, RIGHT, UP, DOWN, NONE
+    }
+
+    private Direction currentDirection = Direction.NONE;
+    private boolean initialisedDirection = false;
+	private double pivotX;
+	private double pivotY;
+
+    private static final int TILE_SIZE = 40;
+
+    public Num1(double centerX, double centerY, double tileSize, GraphicsContext gc) {
+        super(centerX, centerY, tileSize, tileSize, gc);
+        img = new Image(Num1.class.getResource("num1.png").toExternalForm());
+        this.pivotX = tileSize / 2; // Set pivot point to center of the sprite
+        this.pivotY = tileSize / 2; // Set pivot point to center of the sprite
+        update();
+        this.speedX = 1; // Set initial speed
+        this.speedY = 1; // Set initial speed
+        initialiseDirection();
+    }
+ 
+    @Override
+    public void update() {
+        if (!initialisedDirection) {
+            initialiseDirection();
+        } else {
+            enemyMovement();
+        }
+        super.update();
+    }
+
+    
+    private void initialiseDirection() {
+        // Calculate the grid coordinates based on the current position
+        int gridX = (int) (x / TILE_SIZE);
+        int gridY = (int) (y / TILE_SIZE);
+
+        
+        // Check the availability of directions with at least 2 consecutive path tiles
+        if (hasConsecutivePathTiles(gridX, gridY, 0, 1)) {
+           
+            currentDirection = Direction.UP;
+        } else if (hasConsecutivePathTiles(gridX, gridY, 0, -1)) {
+            
+            currentDirection = Direction.DOWN;
+        } else if (hasConsecutivePathTiles(gridX, gridY, -1, 0)) {
+            
+            currentDirection = Direction.LEFT;
+        } else if (hasConsecutivePathTiles(gridX, gridY, 1, 0)) {
+            
+            currentDirection = Direction.RIGHT;
+        }
+
+        // Mark the direction as initialised if a valid direction is found
+        if (currentDirection != Direction.NONE) {
+            initialisedDirection = true;
+        }
+    }
+
+   
+    private boolean hasConsecutivePathTiles(int gridX, int gridY, int offsetX, int offsetY) {
+        // Calculate the coordinates of the next two tiles in the specified direction
+        int nextGridX = gridX + offsetX;
+        int nextGridY = gridY + offsetY;
+        int nextNextGridX = nextGridX + offsetX;
+        int nextNextGridY = nextGridY + offsetY;
+
+        // Check if the next two tiles are path tiles
+        return isPath(nextGridX, nextGridY) && isPath(nextNextGridX, nextNextGridY);
+    }
+
+    @Override 
+    public void moveDown() {
+        double newY = y + speedY; // Update y coordinate by adding speedY
+        if (!isWall(x, newY)) {
+            y = newY; // Update y only if the new position is not a wall
+        }
+    }
+
+    @Override
+    public void moveUp() {
+        double newY = y - speedY; // Update y coordinate by subtracting speedY
+        if (!isWall(x, newY)) {
+            y = newY; // Update y only if the new position is not a wall
+        }
+    }
+
+    @Override
+    public void moveLeft() {
+        double newX = x - speedX; // Update x coordinate by subtracting speedX
+        if (!isWall(newX, y)) {
+            x = newX; // Update x only if the new position is not a wall
+        }
+    }
+
+    @Override
+    public void moveRight() {
+        double newX = x + speedX; // Update x coordinate by adding speedX
+        if (!isWall(newX, y)) {
+            x = newX; // Update x only if the new position is not a wall
+        }
+    }
+
+    
+    public void enemyMovement() {
+        switch (currentDirection) {
+            case DOWN:
+                if (isWall(x, y + speedY)) {
+                    currentDirection = Direction.UP;
+                } else {
+                    moveDown();
+                }
+                break;
+            case UP:
+                if (isWall(x, y - speedY) || y <= 0) {
+                    currentDirection = Direction.DOWN; // Change direction if reaching the top edge
+                } else {
+                    moveUp();
+                }
+                break;
+            case LEFT:
+                if (isWall(x - speedX, y)) {
+                    currentDirection = Direction.RIGHT;
+                } else if (x <= 0) {
+                    currentDirection = Direction.RIGHT; // Change direction if reaching the left edge
+                } else {
+                    moveLeft();
+                }
+                break;
+            case RIGHT:
+                if (isWall(x + speedX, y)) {
+                    currentDirection = Direction.LEFT;
+                } else if (x + width >= gc.getCanvas().getWidth()) {
+                    currentDirection = Direction.LEFT; // Change direction if reaching the right edge
+                } else {
+                    moveRight();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+
+    
+    
+
+    @Override
+    protected boolean isWall(double posX, double posY) {
+        int gridX = (int) (posX / TILE_SIZE);
+        int gridY = (int) (posY / TILE_SIZE);
+
+        if (gridX < 0 || gridX >= Game.getNumTilesX() || gridY < 0 || gridY >= Game.getNumTilesY()) {
+            return true; // If out of bounds, consider it as a wall
+        }
+
+        return Game.getMaze()[gridX][gridY] == 1;
+    }
+
+    
+    private boolean isPath(int gridX, int gridY) {
+        if (gridX < 0 || gridX >= Game.getNumTilesX() || gridY < 0 || gridY >= Game.getNumTilesY()) {
+            return false; // If out of bounds, not a path
+        }
+
+        return Game.getMaze()[gridX][gridY] == 0; // Assuming 0 represents a path tile
+    }
+}
