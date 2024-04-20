@@ -129,6 +129,7 @@ public class Game extends Application {
                 //Update the player instance
                 player.update();
                 
+             
              // Update and render each bullet
                 Iterator<Bullet> bulletIterator = bullets.iterator();
                 while (bulletIterator.hasNext()) {
@@ -139,9 +140,12 @@ public class Game extends Application {
                     } else {
                         // Check for collisions with enemies
                         boolean hitEnemy = false;
-                        for (Enemy enemy : enemyList) {
-                            if (Math.sqrt(Math.pow(enemy.getX() - bullet.getX(), 2) + Math.pow(enemy.getY() - bullet.getY(), 2)) < TILE_SIZE) {
+                        Iterator<Enemy> enemyIterator = enemyList.iterator();
+                        while (enemyIterator.hasNext()) {
+                            Enemy enemy = enemyIterator.next();
+                            if (collidesWith(bullet, enemy)) {
                                 hitEnemy = true;
+                                enemyIterator.remove();  // Remove the enemy instance
                                 break;  // Stop checking if bullet hits any enemy
                             }
                         }
@@ -383,6 +387,15 @@ public class Game extends Application {
         }
 
         return Game.getMaze()[gridX][gridY] == 1;
+    }
+    
+    
+    private boolean collidesWith(Bullet bullet, Enemy enemy) {
+        // Check if the bounding boxes of bullet and enemy intersect
+        return bullet.getX() < enemy.getX() + enemy.getWidth() &&
+               bullet.getX() + bullet.getWidth() > enemy.getX() &&
+               bullet.getY() < enemy.getY() + enemy.getHeight() &&
+               bullet.getY() + bullet.getHeight() > enemy.getY();
     }
     
     

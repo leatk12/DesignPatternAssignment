@@ -1,0 +1,51 @@
+package Assignment.Game;
+
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+
+public class Pow2Bullet extends Bullet {
+    private String direction;
+
+    protected Pow2Bullet(Builder builder) {
+        super(builder.x, builder.y, builder.width, builder.height, builder.gc);
+        this.direction = builder.direction;
+        this.img = new Image("/path/to/bullet_image.png");  // Update with actual image path
+    }
+
+    @Override
+    public void shoot() {
+        switch (direction) {
+            case "LEFT":
+                x -= 8;
+                break;
+            case "RIGHT":
+                x += 8;
+                break;
+            case "UP":
+                y -= 8;
+                break;
+            case "DOWN":
+                y += 8;
+                break;
+        }
+    }
+
+    public static class Builder extends Bullet.Builder<Pow0Bullet, Builder> {
+        private String direction = "RIGHT";  // Default direction
+
+        public Builder setDirection(String direction) {
+            this.direction = direction;
+            return this;
+        }
+
+        @Override
+        public Pow0Bullet build() {
+            return new Pow0Bullet(this);
+        }
+
+        @Override
+        protected Builder self() {
+            return this;
+        }
+    }
+}

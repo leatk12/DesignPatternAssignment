@@ -1,0 +1,150 @@
+package Assignment.Game;
+
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+
+public abstract class Enemy extends GameObject {
+
+	
+	private double boundingBoxWidth;
+	private double boundingBoxHeight;
+    public enum Direction {
+        LEFT, RIGHT, UP, DOWN, NONE
+    }
+
+    protected Direction currentDirection = Direction.NONE;
+    protected boolean directionInitialized = false;
+
+    public Enemy(Game game, double x, double y, double width, double height, GraphicsContext gc) {
+        super(game, x, y, width, height, gc);
+        
+        this.boundingBoxWidth = width;
+        this.boundingBoxHeight = height;
+    }
+
+    @Override
+    public void update() {
+        if (!directionInitialized) {
+            initialiseDirection();
+        } else {
+            enemyMovement();
+        }
+        super.update();
+    }
+
+    protected abstract void initialiseDirection();
+
+    @Override
+    public void moveDown() {
+        double newY = y + speedY;
+        if (!game.isWall(x, newY)) {
+            y = newY;
+        }
+    }
+
+    @Override
+    public void moveUp() {
+        double newY = y - speedY;
+        if (!game.isWall(x, newY)) {
+            y = newY;
+        }
+    }
+
+    @Override
+    public void moveLeft() {
+        double newX = x - speedX;
+        if (!game.isWall(newX, y)) {
+            x = newX;
+        }
+    }
+
+    @Override
+    public void moveRight() {
+        double newX = x + speedX;
+        if (!game.isWall(newX, y)) {
+            x = newX;
+        }
+    }
+
+    public void enemyMovement() {
+        switch (currentDirection) {
+            case DOWN:
+                if (game.isWall(x, y + speedY)) {
+                    currentDirection = Direction.UP;
+                } else {
+                    moveDown();
+                }
+                break;
+            case UP:
+                if (game.isWall(x, y - speedY)) {
+                    currentDirection = Direction.DOWN;
+                } else {
+                    moveUp();
+                }
+                break;
+            case LEFT:
+                if (game.isWall(x - speedX, y)) {
+                    currentDirection = Direction.RIGHT;
+                } else {
+                    moveLeft();
+                }
+                break;
+            case RIGHT:
+                if (game.isWall(x + speedX, y)) {
+                    currentDirection = Direction.LEFT;
+                } else {
+                    moveRight();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    protected boolean hasConsecutivePathTiles(int gridX, int gridY, int offsetX, int offsetY) {
+        int nextGridX = gridX + offsetX;
+        int nextGridY = gridY + offsetY;
+        int nextNextGridX = nextGridX + offsetX;
+        int nextNextGridY = nextGridY + offsetY;
+        return isPath(nextGridX, nextGridY) && isPath(nextNextGridX, nextNextGridY);
+    }
+
+    protected boolean isPath(int gridX, int gridY) {
+        if (gridX < 0 || gridX >= Game.getNumTilesX() || gridY < 0 || gridY >= Game.getNumTilesY()) {
+            return false; // Out of bounds
+        }
+        return Game.getMaze()[gridX][gridY] == 0; // 0 represents a path
+    }
+
+	protected double getX() {
+		return x;
+	}
+
+	protected double getY()  {
+		return y;
+	}
+
+	protected double getWidth()  {
+		return width;
+	}
+
+	protected double getHeight()  {
+		return height;
+	}
+	
+	public double getBoundingBoxWidth()  {
+		return boundingBoxWidth;
+	}
+	
+	public double getBoundingBoxHeight()  {
+		return boundingBoxHeight;
+	}
+	
+	@Override
+	public void render()  {
+		super.render();
+		gc.setStroke(Color.RED);
+		  gc.strokeRect(x - boundingBoxWidth / 2, y - boundingBoxHeight / 2, boundingBoxWidth, boundingBoxHeight);
+	}
+}

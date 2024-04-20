@@ -110,7 +110,21 @@ public abstract class Enemy extends GameObject {
         return Game.getMaze()[gridX][gridY] == 0; // 0 represents a path
     }
 
-	protected abstract double getX();
+	public double getX()  {
+		return x;
+	}
 
-	protected abstract double getY();
+	public double getY()  {
+		return y;
+	}
+
+	public double getWidth() {
+		// TODO Auto-generated method stub
+		return width;
+	}
+
+	public double getHeight() {
+		// TODO Auto-generated method stub
+		return height;
+	}
 }

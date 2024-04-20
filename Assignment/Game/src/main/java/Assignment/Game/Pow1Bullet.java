@@ -56,5 +56,17 @@ public class Pow1Bullet extends GameObject implements Bullet {
 		// TODO Auto-generated method stub
 		return x;
 	}
+
+	@Override
+	public double getWidth() {
+		// TODO Auto-generated method stub
+		return width;
+	}
+
+	@Override
+	public double getHeight() {
+		// TODO Auto-generated method stub
+		return height;
+	}
 	
 }

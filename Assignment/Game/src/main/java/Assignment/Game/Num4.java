@@ -35,14 +35,14 @@ public class Num4 extends Enemy {
     }
 
 	@Override
-	protected double getX() {
+	public double getX() {
 		// TODO Auto-generated method stub
-		return 0;
+		return x;
 	}
 
 	@Override
-	protected double getY() {
+	public double getY() {
 		// TODO Auto-generated method stub
-		return 0;
+		return y;
 	}
 }
