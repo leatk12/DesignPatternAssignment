@@ -575,3 +575,4 @@
 2024-04-20 20:42:06,882 [Worker-33: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory C:\Users\Lea\Desktop\Uni_Stuff\Year_2\design patterns\semester 2\Assessment\Assignment\Game\src\test\resources
 2024-04-20 20:42:22,361 [Worker-23: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory C:\Users\Lea\Desktop\Uni_Stuff\Year_2\design patterns\semester 2\Assessment\Assignment\Game\src\main\resources
 2024-04-20 20:42:22,363 [Worker-23: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory C:\Users\Lea\Desktop\Uni_Stuff\Year_2\design patterns\semester 2\Assessment\Assignment\Game\src\test\resources
+2024-04-20 20:46:32,326 [Worker-5: Loading available Gradle versions] INFO  o.e.b.c.i.u.g.PublishedGradleVersions - Gradle version information cache is out-of-date. Trying to update.
