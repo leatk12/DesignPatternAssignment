@@ -21,8 +21,8 @@ import java.util.Random;
 public class Game extends Application {
 
     private static final int TILE_SIZE = 40;
-    private static  int NUM_TILES_X = 20;
-    private static  int NUM_TILES_Y = 15;
+    private static final int NUM_TILES_X = 20;
+    private static final int NUM_TILES_Y = 15;
     private static final int NUM_NUM1_INSTANCES = 10;
 
     // Array holding the tiles
@@ -69,19 +69,13 @@ public class Game extends Application {
         
         canvas = new Canvas(screenBounds.getWidth(), screenBounds.getHeight());
         scene = new Scene(root, screenBounds.getWidth(), screenBounds.getHeight());
-        
+        root.getChildren().add(canvas);
         
         
         gc = canvas.getGraphicsContext2D();
         primaryStage.setScene(scene);
         primaryStage.setFullScreen(true);
         primaryStage.show();
-        
-        //Calulate the number of tiles based on the size of the canvas and the size of tiles
-        NUM_TILES_X = (int) (canvas.getWidth() / TILE_SIZE);
-        NUM_TILES_Y = (int) (canvas.getHeight() / TILE_SIZE);
-        maze = new int[NUM_TILES_X][NUM_TILES_Y];
-        
 
         //Call to the generateMap() method to create the game map
         generateMap();
@@ -98,8 +92,7 @@ public class Game extends Application {
         //Initialising the object which will represent the player
         player = Player.getInstance(this, gc);
 
-        //Adding the canvas to the root pane
-        root.getChildren().add(canvas);
+        
 
         //Fill the canvas with a black background
         gc.setFill(Color.BLACK);
@@ -316,14 +309,15 @@ public class Game extends Application {
     }
 
 
- // A method which checks whether a spawn point is valid
+    //A method which checks whether a spawn point is valid
     public boolean isValidSpawnPosition(double posX, double posY) {
         int gridX = (int) (posX / TILE_SIZE);
         int gridY = (int) (posY / TILE_SIZE);
 
         // Check if the calculated indices are within bounds
         if (gridX < 0 || gridX >= NUM_TILES_X || gridY < 0 || gridY >= NUM_TILES_Y) {
-            return false; // Return false if out of bounds
+            // Return false if out of bounds
+            return false;
         }
 
         // Check if the tile is a wall or if it's already occupied by another Num1
@@ -331,22 +325,7 @@ public class Game extends Application {
             return false;
         }
 
-        // Check horizontal continuity for three consecutive path tiles
-        if (gridX + 2 < NUM_TILES_X && 
-            maze[gridX + 1][gridY] == 0 && 
-            maze[gridX + 2][gridY] == 0) {
-            return true;
-        }
-
-        // Check vertical continuity for three consecutive path tiles
-        if (gridY + 2 < NUM_TILES_Y && 
-            maze[gridX][gridY + 1] == 0 && 
-            maze[gridX][gridY + 2] == 0) {
-            return true;
-        }
-
-        // If no suitable place found
-        return false;
+        return true;
     }
 
     //A method which checks whether a position has already been occupied by a Num1 object

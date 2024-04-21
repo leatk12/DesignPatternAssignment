@@ -316,14 +316,15 @@ public class Game extends Application {
     }
 
 
- // A method which checks whether a spawn point is valid
+    //A method which checks whether a spawn point is valid
     public boolean isValidSpawnPosition(double posX, double posY) {
         int gridX = (int) (posX / TILE_SIZE);
         int gridY = (int) (posY / TILE_SIZE);
 
         // Check if the calculated indices are within bounds
         if (gridX < 0 || gridX >= NUM_TILES_X || gridY < 0 || gridY >= NUM_TILES_Y) {
-            return false; // Return false if out of bounds
+            // Return false if out of bounds
+            return false;
         }
 
         // Check if the tile is a wall or if it's already occupied by another Num1
@@ -331,22 +332,7 @@ public class Game extends Application {
             return false;
         }
 
-        // Check horizontal continuity for three consecutive path tiles
-        if (gridX + 2 < NUM_TILES_X && 
-            maze[gridX + 1][gridY] == 0 && 
-            maze[gridX + 2][gridY] == 0) {
-            return true;
-        }
-
-        // Check vertical continuity for three consecutive path tiles
-        if (gridY + 2 < NUM_TILES_Y && 
-            maze[gridX][gridY + 1] == 0 && 
-            maze[gridX][gridY + 2] == 0) {
-            return true;
-        }
-
-        // If no suitable place found
-        return false;
+        return true;
     }
 
     //A method which checks whether a position has already been occupied by a Num1 object
