@@ -144,7 +144,7 @@ public class Game extends Application {
                         Iterator<Enemy> enemyIterator = enemyList.iterator();
                         while (enemyIterator.hasNext()) {
                             Enemy enemy = enemyIterator.next();
-                            if (collidesWith(bullet, enemy) && canKill(bullet, enemy)) {
+                            if (collidesWith(bullet, enemy)) {
                                 hitEnemy = true;
                                 enemyIterator.remove();  // Remove the enemy instance
                                 break;  // Stop checking if bullet hits any enemy
@@ -434,19 +434,5 @@ public class Game extends Application {
         }
     }
     
-    
-    
-    private boolean canKill(Bullet bullet, Enemy enemy) {
-        if (bullet instanceof Pow0Bullet && enemy instanceof Num1) {
-            return true;
-        } else if (bullet instanceof Pow1Bullet && enemy instanceof Num2) {
-            return true;
-        } else if (bullet instanceof Pow2Bullet && enemy instanceof Num4) {
-            return true;
-        } else if (bullet instanceof Pow3Bullet && enemy instanceof Num8) {
-            return true;
-        }
-        return false;
-    }
     
 }
