@@ -59,6 +59,23 @@ public class GameObject {
             y = newY;
         }
     }
+    
+    
+    public double getX()  {
+    	return x;
+    }
+    
+    public double getY()  {
+    	return y;
+    }
+    
+    public double getWidth()  {
+    	return width;
+    }
+    
+    public double getHeight()  {
+    	return height;
+    }
 
 
    
@@ -84,25 +101,5 @@ public class GameObject {
 	public void render() {
 		// TODO Auto-generated method stub
 		
-	}
-
-	public double getX() {
-		
-		return x;
-	}
-
-	public double getY() {
-		// TODO Auto-generated method stub
-		return y;
-	}
-
-	public double getHeight() {
-		// TODO Auto-generated method stub
-		return height;
-	}
-
-	public double getWidth() {
-		// TODO Auto-generated method stub
-		return width;
 	}
 }

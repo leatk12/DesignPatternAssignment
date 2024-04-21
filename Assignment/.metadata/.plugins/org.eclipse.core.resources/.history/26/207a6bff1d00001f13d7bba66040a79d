@@ -1,15 +1,11 @@
 package Assignment.Game;
 
-import javafx.application.Platform;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 
 public class Player extends GameObject implements GameObjectBehaviour{
 private String lastDirection = "RIGHT";
-//Variable which holds the number of player lives	
-private int lives = 3;
+	
 	
     private static Player instance;
 
@@ -56,29 +52,6 @@ private int lives = 3;
     public String getLastDirection()  {
 		return lastDirection;
 	}
-    
-    
-    /**
-     * 
-     * @return
-     * 
-     * A method which returns the number of lives a player has
-     */
-    public int getLives()  {
-    	return lives;
-    }
-    
-    
-    /**
-     * A method which decrements the number of lives a player has
-     * tests whether the lives a player has are less than or equal to zero and if so calls the showGameOver method
-     */
-    public void decrementLives()  {
-    	lives--;
-    	if (lives <= 0)  {
-    		showGameOver();
-    	}
-    }
     
     
     public String getName()  {
@@ -174,51 +147,4 @@ private int lives = 3;
 	}
 	
 	
-	 // Method to check if the player intersects with an enemy
-    public boolean intersects(Enemy enemy) {
-        // Get the bounding boxes of the player and enemy
-        double playerLeft = x - width / 2;
-        double playerRight = x + width / 2;
-        double playerTop = y - height / 2;
-        double playerBottom = y + height / 2;
-
-        double enemyLeft = enemy.getX() - enemy.getWidth() / 2;
-        double enemyRight = enemy.getX() + enemy.getWidth() / 2;
-        double enemyTop = enemy.getY() - enemy.getHeight() / 2;
-        double enemyBottom = enemy.getY() + enemy.getHeight() / 2;
-
-        // Check for intersection
-        return playerLeft < enemyRight &&
-               playerRight > enemyLeft &&
-               playerTop < enemyBottom &&
-               playerBottom > enemyTop;
-    }
-	
-	
-	
-	
-	
-	private void showGameOver()  {
-		Platform.runLater(() -> {
-			Alert alert = new Alert(AlertType.INFORMATION);
-			alert.setTitle("Game Over");
-			alert.setHeaderText(null);
-			alert.setContentText("You have died. Game Over!");
-			alert.showAndWait();
-		});
-	
-	}
-
-	public void setX(double x) {
-		
-		this.x = x;
-	}
-	
-	public void setY(double y)  {
-		this.y = y;
-	}
-	
-	
-	
 }
-;

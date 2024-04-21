@@ -19,9 +19,6 @@ import javafx.scene.input.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class Game extends Application {
 
@@ -30,14 +27,6 @@ public class Game extends Application {
     private static  int NUM_TILES_Y = 15;
     private static final int NUM_NUM1_INSTANCES = 10;
 
- // Add a field to track whether the game over alert has been shown recently
-    private boolean isGameOverAlertShown = false;
-
-    // Add a ScheduledExecutorService for delaying player respawn
-    private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-
-    
-    
     // Array holding the tiles
     // 0 is a path and 1 is a wall
     private static int[][] maze = new int[NUM_TILES_X][NUM_TILES_Y];
@@ -421,22 +410,16 @@ public class Game extends Application {
     }
     
     
- // Flag to keep track of whether game over dialog has been shown
-    private boolean isGameOverShown = false;
-
-    // Method to handle collision between player and enemies
+ // Method to handle collision between player and enemies
     private void checkPlayerEnemyCollision() {
         for (Enemy enemy : enemyList) {
             if (player.intersects(enemy)) {
                 player.decrementLives(); // Decrease player lives
-                if (player.getLives() <= 0 && !isGameOverShown) {
+                if (player.getLives() <= 0) {
                     showGameOver(); // Show game over message if lives reach zero
-                    isGameOverShown = true; // Set the flag to true
-                    root.getChildren().remove(player); // Remove the player from the root pane
-                    timer.stop(); // Stop the game loop
-                } else if (player.getLives() > 0) {
-                    // Respawn the player in a new location
-                    respawnPlayer();
+                } else {
+                	//If the player still has lives respawn them in a new location
+                	respawnPlayer();
                 }
             }
         }
@@ -450,39 +433,21 @@ public class Game extends Application {
             int randomY = (int) (Math.random() * NUM_TILES_Y);
             newX = randomX * TILE_SIZE + TILE_SIZE / 2;
             newY = randomY * TILE_SIZE + TILE_SIZE / 2;
-        } while (!isValidSpawnPosition(newX, newY) || isPlayerCollidingWithEnemy(newX, newY));
+        } while (!isValidSpawnPosition(newX, newY));
 
         // Set the player's new position
         player.setX(newX);
         player.setY(newY);
-
-        // Reset the flag for showing game over alert
-        isGameOverAlertShown = false;
-    }
-    
- // Method to check if the player's new position collides with any enemy
-    private boolean isPlayerCollidingWithEnemy(double newX, double newY) {
-        for (Enemy enemy : enemyList) {
-            if (Math.abs(enemy.getX() - newX) < TILE_SIZE && Math.abs(enemy.getY() - newY) < TILE_SIZE) {
-                return true;
-            }
-        }
-        return false;
     }
 
- // Show game over message
+    // Show game over message
     private void showGameOver() {
-        if (!isGameOverAlertShown) {
-            isGameOverAlertShown = true;
-            Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("Game Over");
-            alert.setHeaderText(null);
-            alert.setContentText("You have died. Game Over!");
-            alert.showAndWait();
-
-            // Delay player respawn by 2 seconds
-            executor.schedule(this::respawnPlayer, 2, TimeUnit.SECONDS);
-        }
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Game Over");
+        alert.setHeaderText(null);
+        alert.setContentText("You have died. Game Over!");
+        alert.showAndWait();
+        // Optionally, reset the game or exit the application
     }
 
     
