@@ -173,31 +173,6 @@ private int lives = 3;
 		
 	}
 	
-	
-	 // Method to check if the player intersects with an enemy
-    public boolean intersects(Enemy enemy) {
-        // Get the bounding boxes of the player and enemy
-        double playerLeft = x - width / 2;
-        double playerRight = x + width / 2;
-        double playerTop = y - height / 2;
-        double playerBottom = y + height / 2;
-
-        double enemyLeft = enemy.getX() - enemy.getWidth() / 2;
-        double enemyRight = enemy.getX() + enemy.getWidth() / 2;
-        double enemyTop = enemy.getY() - enemy.getHeight() / 2;
-        double enemyBottom = enemy.getY() + enemy.getHeight() / 2;
-
-        // Check for intersection
-        return playerLeft < enemyRight &&
-               playerRight > enemyLeft &&
-               playerTop < enemyBottom &&
-               playerBottom > enemyTop;
-    }
-	
-	
-	
-	
-	
 	private void showGameOver()  {
 		Platform.runLater(() -> {
 			Alert alert = new Alert(AlertType.INFORMATION);
