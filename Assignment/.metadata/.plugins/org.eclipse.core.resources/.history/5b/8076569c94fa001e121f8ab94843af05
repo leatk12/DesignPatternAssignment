@@ -1,6 +1,0 @@
-module Assignment.Game {
-    requires javafx.controls;
-	requires javafx.graphics;
-	requires java.desktop;
-    exports Assignment.Game;
-}
