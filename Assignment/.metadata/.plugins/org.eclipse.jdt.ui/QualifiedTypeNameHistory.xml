@@ -17,4 +17,6 @@
     <fullyQualifiedTypeName name="java.util.Iterator"/>
     <fullyQualifiedTypeName name="javafx.scene.image.Image"/>
     <fullyQualifiedTypeName name="java.lang.reflect.Constructor"/>
+    <fullyQualifiedTypeName name="javafx.stage.Screen"/>
+    <fullyQualifiedTypeName name="javafx.geometry.Rectangle2D"/>
 </qualifiedTypeNameHistroy>
