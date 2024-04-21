@@ -1,0 +1,35 @@
+package Assignment.Game;
+
+import javafx.scene.canvas.GraphicsContext;
+
+public class Factory implements FactoryIF{
+	
+	GraphicsContext gc;
+
+		
+
+	@Override
+	public GameObject createProduct(String discrim, Game game, double x, double y, double tileSize) {
+	    switch (discrim) {
+	        case "num1":
+	            return new Num1(game, x, y, tileSize, gc);
+	        case "num2":
+	            return new Num2(game, x, y, tileSize, gc);
+	        case "num4":
+	            return new Num4(game, x, y, tileSize, gc);
+	        case "num8":
+	            return new Num8(game, x, y, tileSize, gc);
+	        default:
+	            return null; // return null or throw an exception if the type is unknown
+	    }
+	}
+
+
+	
+
+	
+	public Factory(GraphicsContext gc)  {
+		super();
+		this.gc = gc;
+	}
+}

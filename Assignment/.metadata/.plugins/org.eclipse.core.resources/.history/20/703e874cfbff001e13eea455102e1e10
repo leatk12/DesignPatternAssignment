@@ -62,8 +62,8 @@ public class Game extends Application {
     public void start(Stage primaryStage) throws Exception {
         //Creating instances of the root pane, scene, canvas and graphics context
         root = new Pane();
-        scene = new Scene(root, 800, 600);
-        canvas = new Canvas(800, 600);
+        scene = new Scene(root, 1000, 800);
+        canvas = new Canvas(1000, 800);
         gc = canvas.getGraphicsContext2D();
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -94,9 +94,23 @@ public class Game extends Application {
         factory = new Factory(gc);
 
       //Spawn instances of the Num1 class
-        spawnEnemies();
-        
-        
+        for (int i = 0; i < NUM_NUM1_INSTANCES; i++) {
+            double posX, posY;
+            do {
+                // Generate random tile indices
+                int randomX = (int) (Math.random() * NUM_TILES_X);
+                int randomY = (int) (Math.random() * NUM_TILES_Y);
+               
+             // Calculate the position in the center of the tile
+                posX = randomX * TILE_SIZE + TILE_SIZE / 2;
+                posY = randomY * TILE_SIZE + TILE_SIZE / 2;// Subtract half of player's height
+            } while (!isValidSpawnPosition(posX, posY));
+
+            // Spawn Num1 instance at the center of the tile
+            Num1 num1 = (Num1) factory.createProduct("num1",this, posX, posY, TILE_SIZE);
+            enemyList.add(num1);
+        }
+
         //Initialise and start the game loop timer
         timer = new AnimationTimer() {
             long lastSpawnTime = 0;
@@ -382,27 +396,6 @@ public class Game extends Application {
                bullet.getX() + bullet.getWidth() > enemy.getX() &&
                bullet.getY() < enemy.getY() + enemy.getHeight() &&
                bullet.getY() + bullet.getHeight() > enemy.getY();
-    }
-    
-    private void spawnEnemies() {
-        String[] types = {"num1", "num2", "num4", "num8"};
-        Random random = new Random();
-
-        for (int i = 0; i < NUM_NUM1_INSTANCES; i++) {
-            double posX, posY;
-            do {
-                int randomX = (int) (Math.random() * NUM_TILES_X);
-                int randomY = (int) (Math.random() * NUM_TILES_Y);
-                posX = randomX * TILE_SIZE + TILE_SIZE / 2;
-                posY = randomY * TILE_SIZE + TILE_SIZE / 2;
-            } while (!isValidSpawnPosition(posX, posY));
-
-            String type = types[random.nextInt(types.length)];
-            Enemy enemy = (Enemy) factory.createProduct(type, this, posX, posY, TILE_SIZE);
-            if (enemy != null) {
-                enemyList.add(enemy);
-            }
-        }
     }
     
     

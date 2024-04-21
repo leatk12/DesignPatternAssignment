@@ -9,7 +9,7 @@ public class Num8 extends Enemy {
 
     public Num8(Game game, double x, double y, double tileSize, GraphicsContext gc) {
         super(game, x, y, tileSize, tileSize, gc);
-        img = new Image(Num1.class.getResource("num1.png").toExternalForm());
+        img = new Image(Num1.class.getResource("num8.png").toExternalForm());
         speedX = 1;
         speedY = 1;
     }

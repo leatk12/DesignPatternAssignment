@@ -10,17 +10,29 @@ public class Factory implements FactoryIF{
 
 	@Override
 	public GameObject createProduct(String discrim, Game game, double x, double y, double tileSize) {
-		// TODO Auto-generated method stub
-		if(discrim.equals("num1"))
-			return new Num1(game, x, y, tileSize, this.gc);
-		else if(discrim.equals("num2"))
-			return null;
-		else if(discrim.equals("num4"))
-			return null;
-		else if(discrim.equals("num8"))
-			return null;
-		return null;
+	    GameObject product = null;
+	    switch (discrim) {
+	        case "num1":
+	            product = new Num1(game, x, y, tileSize, gc);
+	            break;
+	        case "num2":
+	            product = new Num2(game, x, y, tileSize, gc);
+	            break;
+	        case "num4":
+	            product = new Num4(game, x, y, tileSize, gc);
+	            break;
+	        case "num8":
+	            product = new Num8(game, x, y, tileSize, gc);
+	            break;
+	    }
+	    if (product == null) {
+	        System.out.println("Failed to create product for type: " + discrim);
+	    } else {
+	        System.out.println("Successfully created product: " + discrim);
+	    }
+	    return product;
 	}
+
 
 	
 
