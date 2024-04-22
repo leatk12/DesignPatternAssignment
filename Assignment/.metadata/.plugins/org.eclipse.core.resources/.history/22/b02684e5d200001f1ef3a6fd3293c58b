@@ -33,9 +33,6 @@ public class Game extends Application {
     private static final int SCORE_X_OFFSET = 200;
     private static final int SCORE_Y_POSITION = 40;
     
-    public static final double SPEED_INCREMENT = 0.1;
-    public static double currentSpeedIncrement = 0.0;
-    
     private Lives lives;
 
  // Add a field to track whether the game over alert has been shown recently
@@ -189,11 +186,6 @@ public class Game extends Application {
                             ((GameObject) bullet).render();  // Continue to render if no collision
                         }
                     }
-                }
-                
-                //Check whether all the enemies have been killed and if so spawn new enemies and increment their speed value
-                if (enemyList.isEmpty())  {
-                	spawnEnemies();
                 }
             }
         };
@@ -502,7 +494,7 @@ public class Game extends Application {
             alert.setHeaderText(null);
             alert.setContentText("You have died. Game Over!");
             alert.showAndWait();
-            resetGame();
+
             // Delay player respawn by 2 seconds
             executor.schedule(this::respawnPlayer, 2, TimeUnit.SECONDS);
         }
@@ -520,11 +512,6 @@ public class Game extends Application {
     }
     
     private void spawnEnemies() {
-        boolean respawn = enemyList.isEmpty();
-        if (respawn) {
-            currentSpeedIncrement += SPEED_INCREMENT;
-        }
-        
         String[] types = {"num1", "num2", "num4", "num8"};
         Random random = new Random();
 
@@ -544,12 +531,8 @@ public class Game extends Application {
             }
         }
     }
-
     
-    private void resetGame() {
-        currentSpeedIncrement = 0.0;  // Reset speed increment when the player dies
-        
-    }
+    
     
     private boolean canKill(Bullet bullet, Enemy enemy) {
         if (bullet instanceof Pow0Bullet && enemy instanceof Num1) {

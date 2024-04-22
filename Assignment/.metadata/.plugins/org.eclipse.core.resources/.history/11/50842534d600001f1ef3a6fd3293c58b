@@ -29,12 +29,12 @@ public class Game extends Application {
     private static final int TILE_SIZE = 40;
     private static  int NUM_TILES_X = 20;
     private static  int NUM_TILES_Y = 15;
-    private static final int NUM_NUM1_INSTANCES = 20;
+    private static final int NUM_NUM1_INSTANCES = 1;
     private static final int SCORE_X_OFFSET = 200;
     private static final int SCORE_Y_POSITION = 40;
     
-    public static final double SPEED_INCREMENT = 0.1;
-    public static double currentSpeedIncrement = 0.0;
+    private static final double SPEED_INCREMENT = 0.1;
+    private static double currentSpeedIncrement = 0.0;
     
     private Lives lives;
 
