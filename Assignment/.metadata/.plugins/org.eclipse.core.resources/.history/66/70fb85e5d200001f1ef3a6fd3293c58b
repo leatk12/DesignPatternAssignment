@@ -127,10 +127,4 @@ public abstract class Enemy extends GameObject {
 		// TODO Auto-generated method stub
 		return height;
 	}
-	
-	public void incrementSpeed(double increment) {
-        speedX += increment;
-        speedY += increment;
-    }
-	
 }

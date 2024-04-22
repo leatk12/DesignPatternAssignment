@@ -29,12 +29,9 @@ public class Game extends Application {
     private static final int TILE_SIZE = 40;
     private static  int NUM_TILES_X = 20;
     private static  int NUM_TILES_Y = 15;
-    private static final int NUM_NUM1_INSTANCES = 20;
+    private static final int NUM_NUM1_INSTANCES = 1;
     private static final int SCORE_X_OFFSET = 200;
     private static final int SCORE_Y_POSITION = 40;
-    
-    public static final double SPEED_INCREMENT = 0.1;
-    public static double currentSpeedIncrement = 0.0;
     
     private Lives lives;
 
@@ -502,7 +499,7 @@ public class Game extends Application {
             alert.setHeaderText(null);
             alert.setContentText("You have died. Game Over!");
             alert.showAndWait();
-            resetGame();
+
             // Delay player respawn by 2 seconds
             executor.schedule(this::respawnPlayer, 2, TimeUnit.SECONDS);
         }
@@ -521,10 +518,6 @@ public class Game extends Application {
     
     private void spawnEnemies() {
         boolean respawn = enemyList.isEmpty();
-        if (respawn) {
-            currentSpeedIncrement += SPEED_INCREMENT;
-        }
-        
         String[] types = {"num1", "num2", "num4", "num8"};
         Random random = new Random();
 
@@ -541,15 +534,15 @@ public class Game extends Application {
             Enemy enemy = (Enemy) factory.createProduct(type, this, posX, posY, TILE_SIZE);
             if (enemy != null) {
                 enemyList.add(enemy);
+                if (respawn) {
+                    enemy.incrementSpeed(0.1);  // Apply speed increment after adding to the list
+                }
             }
         }
     }
 
     
-    private void resetGame() {
-        currentSpeedIncrement = 0.0;  // Reset speed increment when the player dies
-        
-    }
+    
     
     private boolean canKill(Bullet bullet, Enemy enemy) {
         if (bullet instanceof Pow0Bullet && enemy instanceof Num1) {
