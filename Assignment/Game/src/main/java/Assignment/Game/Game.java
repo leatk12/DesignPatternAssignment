@@ -1,7 +1,8 @@
-package Assignment.Game;
+ package Assignment.Game;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -29,6 +30,10 @@ public class Game extends Application {
     private static  int NUM_TILES_X = 20;
     private static  int NUM_TILES_Y = 15;
     private static final int NUM_NUM1_INSTANCES = 10;
+    private static final int SCORE_X_OFFSET = 200;
+    private static final int SCORE_Y_POSITION = 40;
+    
+    private Lives lives;
 
  // Add a field to track whether the game over alert has been shown recently
     private boolean isGameOverAlertShown = false;
@@ -110,6 +115,9 @@ public class Game extends Application {
 
         //Initialising the object which will represent the player
         player = Player.getInstance(this, gc);
+        
+        //Initialising instances of the Lives class
+        lives = new Lives(this, 20, 20, player.getLives(), gc);
 
         //Adding the canvas to the root pane
         root.getChildren().add(canvas);
@@ -146,6 +154,11 @@ public class Game extends Application {
                 //Update the player instance
                 player.update();
                 
+                lives.update();
+                
+                gc.setFill(Color.WHITE);;
+                gc.fillText("Score: " + player.getScore(), lives.getX() + SCORE_X_OFFSET, SCORE_Y_POSITION);
+                
              
              // Update and render each bullet
                 Iterator<Bullet> bulletIterator = bullets.iterator();
@@ -163,6 +176,7 @@ public class Game extends Application {
                             if (collidesWith(bullet, enemy) && canKill(bullet, enemy)) {
                                 hitEnemy = true;
                                 enemyIterator.remove();  // Remove the enemy instance
+                                player.incrementPlayerScore(enemy);
                                 break;  // Stop checking if bullet hits any enemy
                             }
                         }
@@ -429,8 +443,9 @@ public class Game extends Application {
         for (Enemy enemy : enemyList) {
             if (player.intersects(enemy)) {
                 player.decrementLives(); // Decrease player lives
+                lives.setCount(player.getLives());
                 if (player.getLives() <= 0 && !isGameOverShown) {
-                    showGameOver(); // Show game over message if lives reach zero
+                    Platform.runLater(this::showGameOver); // Ensure this runs on the JavaFX Application Thread
                     isGameOverShown = true; // Set the flag to true
                     root.getChildren().remove(player); // Remove the player from the root pane
                     timer.stop(); // Stop the game loop

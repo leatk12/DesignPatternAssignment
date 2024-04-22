@@ -218,7 +218,16 @@ private int lives = 3;
 		this.y = y;
 	}
 	
+	public void incrementPlayerScore(Enemy enemy) {
+	    if (enemy instanceof Num1) {
+	        setScore(getScore() + 10);  // For Num1, increase score by 10
+	    } else if (enemy instanceof Num2) {
+	        setScore(getScore() + 15);  // For Num2, increase score by 15
+	    } else if (enemy instanceof Num4) {
+	        setScore(getScore() + 20);  // For Num4, increase score by 20
+	    } else if (enemy instanceof Num8) {
+	        setScore(getScore() + 25);  // For Num8, increase score by 25
+	    }
+	}
 	
-	
-}
-;
+};
