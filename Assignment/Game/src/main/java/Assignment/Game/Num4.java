@@ -10,8 +10,9 @@ public class Num4 extends Enemy {
     public Num4(Game game, double x, double y, double tileSize, GraphicsContext gc) {
         super(game, x, y, tileSize, tileSize, gc);
         img = new Image(Num1.class.getResource("num4.png").toExternalForm());
-        speedX = 1;
-        speedY = 1;
+        speedX = 1 + Game.currentSpeedIncrement;
+        speedY = 1 + Game.currentSpeedIncrement;
+        System.out.println("Num4 created with speedX = " + speedX + " and speedY = " + speedY);
     }
 
     @Override
