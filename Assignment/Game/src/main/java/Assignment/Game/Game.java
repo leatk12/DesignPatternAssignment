@@ -83,31 +83,21 @@ public class Game extends Application {
    
     @Override
     public void start(Stage primaryStage) throws Exception {
-        //Getting the screen bounds
-    	Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();    	
-    	//Creating instances of the root pane, scene, canvas and graphics context
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
         root = new Pane();
-        
         canvas = new Canvas(screenBounds.getWidth(), screenBounds.getHeight());
         scene = new Scene(root, screenBounds.getWidth(), screenBounds.getHeight());
-        
-        
-        
         gc = canvas.getGraphicsContext2D();
         primaryStage.setScene(scene);
         primaryStage.setFullScreen(true);
         primaryStage.show();
-        
-        //Calulate the number of tiles based on the size of the canvas and the size of tiles
+
         NUM_TILES_X = (int) (canvas.getWidth() / TILE_SIZE);
         NUM_TILES_Y = (int) (canvas.getHeight() / TILE_SIZE);
         maze = new int[NUM_TILES_X][NUM_TILES_Y];
-        
 
-        //Call to the generateMap() method to create the game map
         generateMap();
 
-        // Calculate the initial position of the player to ensure it spawns on a path tile
         double playerInitialX, playerInitialY;
         do {
             int randomX = (int) (Math.random() * NUM_TILES_X);
@@ -116,95 +106,74 @@ public class Game extends Application {
             playerInitialY = randomY * TILE_SIZE + TILE_SIZE / 2;
         } while (!isValidSpawnPosition(playerInitialX, playerInitialY));
 
-        //Initialising the object which will represent the player
         player = Player.getInstance(this, gc);
-        
-        //Initialising instances of the Lives class
+
         lives = new Lives(this, 20, 20, player.getLives(), gc);
 
-        //Adding the canvas to the root pane
         root.getChildren().add(canvas);
-
-        //Fill the canvas with a black background
         gc.setFill(Color.BLACK);
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-        //Create an instance of the factory class used to create game objects
         factory = new Factory(gc);
 
-      //Spawn instances of the Num1 class
         spawnEnemies();
-        
-        
-        //Initialise and start the game loop timer
+
         timer = new AnimationTimer() {
             long lastSpawnTime = 0;
 
             @Override
             public void handle(long now) {
-                //Clear the canvas
                 gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-             // Update the Num1 instances and perform enemy movement
                 for (Enemy enemy : enemyList) {
                     enemy.update();
                     enemy.enemyMovement();
                 }
-                
-                //Check for player and enemy collisions
+
                 checkPlayerEnemyCollision();
 
-                //Update the player instance
                 player.update();
-                
+
                 lives.update();
-                
+
                 gc.setFill(Color.WHITE);;
                 gc.fillText("Score: " + player.getScore(), lives.getX() + SCORE_X_OFFSET, SCORE_Y_POSITION);
-                
-             
-             // Update and render each bullet
+
                 Iterator<Bullet> bulletIterator = bullets.iterator();
                 while (bulletIterator.hasNext()) {
                     Bullet bullet = bulletIterator.next();
-                    bullet.shoot();  // Update bullet's position based on its direction
+                    bullet.shoot();
                     if (isBulletOffScreen(bullet) || isWall(bullet.getX(), bullet.getY())) {
-                        bulletIterator.remove();  // Remove the bullet if it collides or moves off screen
+                        bulletIterator.remove();
                     } else {
-                        // Check for collisions with enemies
                         boolean hitEnemy = false;
-                        Iterator<Enemy> enemyIterator = enemyList.iterator();
+                        Iterator <Enemy> enemyIterator = enemyList.iterator();
                         while (enemyIterator.hasNext()) {
                             Enemy enemy = enemyIterator.next();
                             if (collidesWith(bullet, enemy) && canKill(bullet, enemy)) {
                                 hitEnemy = true;
-                                enemyIterator.remove();  // Remove the enemy instance
+                                enemyIterator.remove();
                                 player.incrementPlayerScore(enemy);
-                                break;  // Stop checking if bullet hits any enemy
+                                break;
                             }
                         }
                         if (hitEnemy) {
-                            bulletIterator.remove();  // Remove the bullet if it hits an enemy
+                            bulletIterator.remove();
                         } else {
-                            ((GameObject) bullet).render();  // Continue to render if no collision
+                            ((GameObject) bullet).render();
                         }
                     }
                 }
-                
-                //Check whether all the enemies have been killed and if so spawn new enemies and increment their speed value
-                if (enemyList.isEmpty())  {
-                	spawnEnemies();
+
+                if (enemyList.isEmpty()) {
+                    spawnEnemies();
                 }
             }
         };
         timer.start();
 
-
-        //DEvent handler responsible for key presses
         scene.setOnKeyPressed((KeyEvent e) -> {
-            // Use switch-case to distinguish between key codes
             switch (e.getCode()) {
-                // Map Numpad keys explicitly
                 case NUMPAD0:
                     currentBulletType = Pow0Bullet.class;
                     System.out.println("Switched to Pow0Bullet");
@@ -221,39 +190,42 @@ public class Game extends Application {
                     currentBulletType = Pow3Bullet.class;
                     System.out.println("Switched to Pow3Bullet");
                     break;
-
-                // Arrow keys for movement
                 case LEFT:
-                case KP_LEFT: // KP_LEFT is for keypad left with Num Lock off
+                case KP_LEFT:
                     player.moveLeft();
                     break;
                 case RIGHT:
-                case KP_RIGHT: // KP_RIGHT is for keypad right with Num Lock off
+                case KP_RIGHT:
                     player.moveRight();
                     break;
                 case UP:
-                case KP_UP: // KP_UP is for keypad up with Num Lock off
+                case KP_UP:
                     player.moveUp();
                     break;
                 case DOWN:
-                case KP_DOWN: // KP_DOWN is for keypad down with Num Lock off
+                case KP_DOWN:
                     player.moveDown();
                     break;
-
-                // Space for firing bullets
                 case SPACE:
                     fireBullet();
                     break;
-
                 default:
                     break;
             }
         });
-        
+
+        // Creating and displaying the InfoBox
+        InfoBox infoBox = new InfoBox(this, canvas.getWidth() / 2, canvas.getHeight() / 2, 400, 200);
+        infoBox.update(); // Display the information box
     }
 
+    public void startGame() {
+        timer.start(); // Start the game loop
+    }
 
-
+    
+    
+    
     //A method which generates the game map
     private void generateMap() {
         // Initialise the maze grid with all walls
@@ -336,6 +308,10 @@ public class Game extends Application {
     }
 
     //Getter methods
+    
+    public Pane getRoot()  {
+    	return root;
+    }
 
     public static int getTileSize() {
         return TILE_SIZE;
@@ -546,9 +522,25 @@ public class Game extends Application {
     }
 
     
-    private void resetGame() {
+    public void resetGame() {
+    	//Reset score
+    	player.setScore(0);
+    	//Reset the players lives
+    	player.setLives(3);
+    	//Create a new instance of the player
+    	player.getInstance(null, gc);
+    	//Clear all enemy objects
+    	enemyList.clear();
+    	//When the existing enemies have been cleared spawn a new selection of enemies
+    	spawnEnemies();
+    	 	
+    	
         currentSpeedIncrement = 0.0;  // Reset speed increment when the player dies
         
+        //Setting the isGameOver flag to false
+        isGameOverShown = false;
+        //Start the game loop again
+        timer.start();
     }
     
     private boolean canKill(Bullet bullet, Enemy enemy) {

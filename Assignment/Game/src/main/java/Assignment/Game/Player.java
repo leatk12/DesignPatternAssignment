@@ -1,9 +1,13 @@
 package Assignment.Game;
 
+import java.util.Optional;
+
 import javafx.application.Platform;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 
 public class Player extends GameObject implements GameObjectBehaviour{
@@ -80,6 +84,9 @@ private int lives = 3;
     	}
     }
     
+    public void setLives(int newLives)  {
+    	lives = newLives;
+    }
     
     public String getName()  {
         return name;
@@ -200,14 +207,31 @@ private int lives = 3;
 	
 	private void showGameOver()  {
 		Platform.runLater(() -> {
-			Alert alert = new Alert(AlertType.INFORMATION);
+			Alert alert = new Alert(AlertType.CONFIRMATION);
 			alert.setTitle("Game Over");
-			alert.setHeaderText(null);
-			alert.setContentText("You have died. Game Over!");
-			alert.showAndWait();
+			alert.setHeaderText("You have died!");
+			alert.setContentText("Do you want to continue?");
+
+			ButtonType buttonTypeReset = new ButtonType("Restart");
+			ButtonType buttonTypeExit = new ButtonType("Quit game", ButtonData.CANCEL_CLOSE);
+			
+			alert.getButtonTypes().setAll(buttonTypeReset, buttonTypeExit);
+			
+			Optional<ButtonType> result = alert.showAndWait();
+			
+			if (result.isPresent() && result.get() == buttonTypeReset)  {
+				game.resetGame();
+			}  else {
+				Platform.exit();
+				System.exit(0);
+			}
 		});
 	
 	}
+	
+	
+	
+	
 
 	public void setX(double x) {
 		
@@ -230,4 +254,9 @@ private int lives = 3;
 	    }
 	}
 	
-};
+	
+	
+	
+	
+	
+}
