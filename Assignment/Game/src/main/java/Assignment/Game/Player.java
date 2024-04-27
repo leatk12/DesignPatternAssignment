@@ -11,25 +11,60 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 
 public class Player extends GameObject implements GameObjectBehaviour{
-private String lastDirection = "RIGHT";
-//Variable which holds the number of player lives	
-private int lives = 3;
-	
-    private static Player instance;
 
+	//Variable which stores the last direction that the player moved in
+	//Used for setting the bullet direction
+	private String lastDirection = "RIGHT";
+	
+	//Variable which holds the number of player lives	
+	private int lives = 3;
+	
+	//Static variable for implementing the singleton design pattern
+    private static Player instance;
+    
+  //Variable which stores the players score
+    private int score;
+
+    /**
+     * 
+     * @param game
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     * @param gc
+     * 
+     * Private constructor to restrict instantiation from outside the class and to support the singleton design pattern
+     * 
+     */
     private Player(Game game, double x, double y, double width, double height, GraphicsContext gc) {
-        super(game, x, y, width, height,  gc);
-        this.name = "default";
-        this.score = 0;
-        // TODO Auto-generated constructor stub
+        //Call the constructor of the superclass GameObject.java
+    	super(game, x, y, width, height,  gc);  	
+        //Load the player image from resources        
         this.img = new Image(Player.class.getResource("iceT.png").toExternalForm());
+        //Call the update method to draw the player object
         update();
     }
 
+    
+    /**
+     * 
+     * @param game
+     * @param gc
+     * @return
+     * 
+     * @return
+     * 
+     * A static method to get the singleton instance of the player object
+     */
     public static synchronized Player getInstance(Game game, GraphicsContext gc)  {
-        if (instance == null)  {
-            double x, y;
+        //Check if the instance has not already been created
+    	if (instance == null)  {
+           //Variables for the players position
+    		double x, y;
+    		//Variables to calculate tile positions
             int tileX, tileY;
+            //do-while loop which  performs ensures that the player object is spawned in a valid location
             do {
                 // Generate random coordinates
                 x = Math.random() * Game.getNumTilesX() * Game.getTileSize();
@@ -37,15 +72,17 @@ private int lives = 3;
                 // Convert coordinates to tile indices
                 tileX = (int) (x / Game.getTileSize());
                 tileY = (int) (y / Game.getTileSize());
+                //Check if position is valid by calling the isValidSpawnPosition method in the Game.java class
             } while (!game.isValidSpawnPosition(x, y));
 
-            // Set the position within the center of the path tile
+            // Set the position within the centre of the path tile
             x = tileX * Game.getTileSize() + Game.getTileSize() / 2;
             y = tileY * Game.getTileSize() + Game.getTileSize() / 2;
 
             // Create the player instance
             instance = new Player(game, x, y, 40, 40, gc);
         }
+    	//Return the singleton instance
         return instance;
     }
 
@@ -53,10 +90,16 @@ private int lives = 3;
     
     
 
-    private String name;
-    private int score;
+   
 
     //Getters and setters
+    
+    /**
+     * 
+     * @return
+     * 
+     * Getter method which returns the value of the lastDirection variable
+     */
     public String getLastDirection()  {
 		return lastDirection;
 	}
@@ -84,96 +127,167 @@ private int lives = 3;
     	}
     }
     
+    /**
+     * 
+     * @param newLives
+     * 
+     * Method which initialise the lives variable with the value of newLives
+     */
     public void setLives(int newLives)  {
     	lives = newLives;
     }
     
-    public String getName()  {
-        return name;
-    }
+    
 
-    public void setName(String name)  {
-        this.name = name;
-    }
-
+    /**
+     * 
+     * @return
+     * 
+     * Getter method which returns the value of the score variable
+     */
     public int getScore()  {
         return score;
 
     }
 
+    /**
+     * 
+     * @param score
+     * 
+     * Method which sets the score variable to the value passed to the method parameter
+     */
     public void setScore(int score)  {
         this.score = score;
     }
 
-    //Method to increment score
+    
+    /**
+     *Method to increment score 
+     */
     public void incrementScore()  {
         score++;
     }
 
-    //Method to reset the score
+    
+    /**
+     * Method to reset the score
+     */
     public void resetScore()  {
         score = 0;
     }
 
     //Getters for player movement
+    
+    /**
+     * @return
+     * 
+     * Method which returns the value of x
+     */
     public double getX()  {
         return x;
     }
 
+    
+    /**
+     * @return
+     * 
+     * Method which returns the value of y
+     */
     public double getY()  {
         return y;
     }
 
+    /**
+     * 
+     * @return
+     * 
+     * Method which returns the value of speedX
+     */
     public double getSpeedX()  {
         return speedX;
     }
 
+    
+    /**
+     * 
+     * @return
+     * 
+     * Method which returns the value of speedY
+     */
     public double getSpeedY()  {
         return speedY;
     }
     
     
-    
+    /**
+     * Method which overrides the moveLeft method from GameObject
+     */
     @Override
     public void moveLeft()  {
+    	//Call the superclass method to move the player left
     	super.moveLeft();
+    	//Initialise the lastDirection variable with the value "LEFT"
     	lastDirection ="LEFT";
     }
     
+    /**
+     * method which overrides the moveRight method from GameObject
+     */
     @Override
     public void moveRight()  {
+    	//Call the superclass method to move the player right
     	super.moveRight();
+    	//Initialise the lastDirection variable with the value "RIGHT"
     	lastDirection = "RIGHT";
     }
     
+    
+    /**
+     *Method which overrides the moveUp method in the GameObject class
+     */
     @Override
     public void moveUp()  {
+    	//Call the superclass method to move the player right
     	super.moveUp();
+    	//Initialise the lastDirection variable with the value "UP"
     lastDirection = "UP";
     }
     
+    /**
+     * Method which overrides the moveDown method in the GameObject class
+     */
     @Override
     public void moveDown()  {
+    	//Call the superclass method to move the player right
     	super.moveDown();
+    	//Initialise the lastDirection variable with the value "DOWN"
     	lastDirection = "DOWN";
     }
     
     
 
+    /**
+     * Method which overrides the update method in the GameObject class
+     */
     public void update() {
+    	//Set the width for the player image
         double playerWidth = 30;
+        //Set the height for the player image
         double playerHeight = 40;
-
+        //Check whether the image is not null
         if (img != null)
+        	//Draw the player image centred at (x,y)
             gc.drawImage(img, x- width / 2, y - height /2, width, height);
     }
 
+    //	Empty implementation of the updateBehaviour method from the GameObjectBehaviour class
 	@Override
 	public void updateBehaviour() {
 		// TODO Auto-generated method stub
 		
 	}
 
+	//Empty implementation of the enemyMovent method from GameObjectBehaviour
 	@Override
 	public void enemyMovement() {
 		// TODO Auto-generated method stub
@@ -181,20 +295,28 @@ private int lives = 3;
 	}
 	
 	
-	 // Method to check if the player intersects with an enemy
-    public boolean intersects(Enemy enemy) {
+	 
+    /**
+     * 
+     * @param enemy
+     * @return
+     * 
+     * Method to check if the player intersects with an enemy
+     */
+	public boolean intersects(Enemy enemy) {
         // Get the bounding boxes of the player and enemy
         double playerLeft = x - width / 2;
         double playerRight = x + width / 2;
         double playerTop = y - height / 2;
         double playerBottom = y + height / 2;
 
+        //Calculate the bounding boxes of the enemy objects
         double enemyLeft = enemy.getX() - enemy.getWidth() / 2;
         double enemyRight = enemy.getX() + enemy.getWidth() / 2;
         double enemyTop = enemy.getY() - enemy.getHeight() / 2;
         double enemyBottom = enemy.getY() + enemy.getHeight() / 2;
 
-        // Check for intersection
+        // Check for intersection between the players bounding box and the enemy bounding box
         return playerLeft < enemyRight &&
                playerRight > enemyLeft &&
                playerTop < enemyBottom &&
@@ -204,25 +326,40 @@ private int lives = 3;
 	
 	
 	
-	
+	/**
+	 * Method to display a game over alert and handle player responses
+	 * Player can choose to restart the game or exit the game
+	 */
 	private void showGameOver()  {
 		Platform.runLater(() -> {
+			//Create a new alert of type CONFIRMATION
 			Alert alert = new Alert(AlertType.CONFIRMATION);
+			//Set the title of the alert
 			alert.setTitle("Game Over");
+			//Set the header text for the alert
 			alert.setHeaderText("You have died!");
+			//Set the content text of the alert
 			alert.setContentText("Do you want to continue?");
 
+			//Create a button to restart the game
 			ButtonType buttonTypeReset = new ButtonType("Restart");
+			//Create a button to exit the game
 			ButtonType buttonTypeExit = new ButtonType("Quit game", ButtonData.CANCEL_CLOSE);
 			
+			//Set the button types on the alert
 			alert.getButtonTypes().setAll(buttonTypeReset, buttonTypeExit);
 			
+			//Show the alert and wait for users response
 			Optional<ButtonType> result = alert.showAndWait();
 			
+			//Check whether the restart button has been pressed
 			if (result.isPresent() && result.get() == buttonTypeReset)  {
+				//Call the resetGame method in the Game.java class to restart the game
 				game.resetGame();
 			}  else {
+				//Exit the application
 				Platform.exit();
+				//Terminate the JVM
 				System.exit(0);
 			}
 		});

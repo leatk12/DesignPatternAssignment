@@ -26,6 +26,8 @@ import java.util.concurrent.TimeUnit;
 
 public class Game extends Application {
 
+	
+	//Defining constants which specify the size and position of the tiles and the position of the score
     private static final int TILE_SIZE = 40;
     private static  int NUM_TILES_X = 20;
     private static  int NUM_TILES_Y = 15;
@@ -33,9 +35,11 @@ public class Game extends Application {
     private static final int SCORE_X_OFFSET = 200;
     private static final int SCORE_Y_POSITION = 40;
     
+    //Variables which for the controlling the speed of enemies
     public static final double SPEED_INCREMENT = 0.1;
     public static double currentSpeedIncrement = 0.0;
     
+    //A variable which is an instance of the lives class
     private Lives lives;
 
  // Add a field to track whether the game over alert has been shown recently
@@ -80,65 +84,102 @@ public class Game extends Application {
     }
 
     //The start method for the application
-   
-    @Override
+       @Override
     public void start(Stage primaryStage) throws Exception {
+    	   
+    	   //Obtaining the bounds of the screen that the game is running on to ensure the game window is correctly sized
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+        //Create the main pane which will hold the game elements
         root = new Pane();
+        //Create a canvas using the screen bounds retrieved above
         canvas = new Canvas(screenBounds.getWidth(), screenBounds.getHeight());
+       //Create a scene with the root pane and set its six=ze to the screen bounds retrieved above
         scene = new Scene(root, screenBounds.getWidth(), screenBounds.getHeight());
+       //Set the graphics context of the canvas
         gc = canvas.getGraphicsContext2D();
+        //Set the screated scene on the primary stage
         primaryStage.setScene(scene);
+       //Sets the stage to be full screen
         primaryStage.setFullScreen(true);
+        //Displays the stage
         primaryStage.show();
 
+        //Using the canvas width calculate the number of horizontal tiles 
         NUM_TILES_X = (int) (canvas.getWidth() / TILE_SIZE);
+        //Using the canvas height calculate the number of vertical tiles
         NUM_TILES_Y = (int) (canvas.getHeight() / TILE_SIZE);
+        //Initialise an array based on the number of tiles
         maze = new int[NUM_TILES_X][NUM_TILES_Y];
 
+        //Calls the generateMap mathod
         generateMap();
 
+        //Create two double variables for the players initial coordinates
         double playerInitialX, playerInitialY;
+        //A loop whichfinds a valid spawn position for the player.
         do {
             int randomX = (int) (Math.random() * NUM_TILES_X);
             int randomY = (int) (Math.random() * NUM_TILES_Y);
             playerInitialX = randomX * TILE_SIZE + TILE_SIZE / 2;
             playerInitialY = randomY * TILE_SIZE + TILE_SIZE / 2;
+            //Calls the isValidSpawnPosition method to ensure that the tile selected to spawn the player does not already contain another game object
         } while (!isValidSpawnPosition(playerInitialX, playerInitialY));
 
+        //Initialised the player object using a singleton design pattern
         player = Player.getInstance(this, gc);
 
+        //Creates an instance of the lives class which will manage the player's lives
         lives = new Lives(this, 20, 20, player.getLives(), gc);
 
+        
+        //Adding the canvas to the root pane
         root.getChildren().add(canvas);
+        //Sets the canvas background to black
         gc.setFill(Color.BLACK);
+        //Fills the canvas with the set colour
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
+        //Create an instance of the Factory class which will be used for creating game elements
         factory = new Factory(gc);
 
+        //Call to the spawnEnemies method which creates the initial enemies of the game
         spawnEnemies();
 
+        //Creating an animation timer which will handle the games logic during each animation frame
+        
         timer = new AnimationTimer() {
             long lastSpawnTime = 0;
 
             @Override
             public void handle(long now) {
+            	//Clears the canvas at the start of each frame 
+            	//Creates the illusion of movements for game objects
                 gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
+                //Loop which updates and moves each enemy instance
                 for (Enemy enemy : enemyList) {
                     enemy.update();
                     enemy.enemyMovement();
                 }
 
+                //Call to method which checks for collisions between the Player object and enemy objects
                 checkPlayerEnemyCollision();
 
+                //Update the state of the playter
                 player.update();
 
+                
+                //Update the players lives
                 lives.update();
 
-                gc.setFill(Color.WHITE);;
+                
+                //Set the colour of the text to white
+                gc.setFill(Color.WHITE);
+                //Display the players score on the canvas and specify its x and y position
                 gc.fillText("Score: " + player.getScore(), lives.getX() + SCORE_X_OFFSET, SCORE_Y_POSITION);
 
+                //Manages the bullets
+                //Checks to see whether the bullet has collided with any game objects and destroys the bullet if true
                 Iterator<Bullet> bulletIterator = bullets.iterator();
                 while (bulletIterator.hasNext()) {
                     Bullet bullet = bulletIterator.next();
@@ -165,13 +206,18 @@ public class Game extends Application {
                     }
                 }
 
+                //Respawns a new set of enemies if all existing enemies are defeated
                 if (enemyList.isEmpty()) {
                     spawnEnemies();
                 }
             }
         };
+        
+        //Starts the game loop
         timer.start();
 
+        
+        //Key press event handler which manages player input to allow the player to control the player object
         scene.setOnKeyPressed((KeyEvent e) -> {
             switch (e.getCode()) {
                 case NUMPAD0:
@@ -216,17 +262,25 @@ public class Game extends Application {
 
         // Creating and displaying the InfoBox
         InfoBox infoBox = new InfoBox(this, canvas.getWidth() / 2, canvas.getHeight() / 2, 400, 200);
-        infoBox.update(); // Display the information box
+     // Display the information box
+        infoBox.update(); 
     }
 
+       /**
+        * Method which starts the game loop
+        */
     public void startGame() {
-        timer.start(); // Start the game loop
+    	// Start the game loop
+        timer.start(); 
     }
 
     
     
     
-    //A method which generates the game map
+    
+    /**
+     * A method which generated the game map
+     */
     private void generateMap() {
         // Initialise the maze grid with all walls
         for (int i = 0; i < NUM_TILES_X; i++) {
@@ -236,7 +290,7 @@ public class Game extends Application {
             }
         }
 
-        // Random starting point for the maze generation
+        // Create a random starting point for the path in the maze
         Random rand = new Random();
         int startX = rand.nextInt(NUM_TILES_X);
         int startY = rand.nextInt(NUM_TILES_Y);
@@ -277,7 +331,7 @@ public class Game extends Application {
                 }
             }
 
-            // Only one adjacent cell is a path
+            // convert the wall to a path is exactly one adjacent tile is a path
             if (cellsWithPaths == 1) {
                 // Convert the wall to a path
                 maze[x][y] = 0;
@@ -309,28 +363,58 @@ public class Game extends Application {
 
     //Getter methods
     
+    /**
+     * 
+     * @return root
+     */
     public Pane getRoot()  {
     	return root;
     }
 
+    /**
+     * 
+     * @return TILE_SIZE
+     */
     public static int getTileSize() {
         return TILE_SIZE;
     }
 
+    /**
+     * 
+     * @return NUM_TILES_X
+     */
     public static int getNumTilesX() {
         return NUM_TILES_X;
     }
 
+    /**
+     * 
+     * @return NUM_TILES_Y
+     */
     public static int getNumTilesY() {
         return NUM_TILES_Y;
     }
 
+    
+    /**
+     * 
+     * @return maze
+     */
     public static int[][] getMaze() {
         return maze;
     }
 
 
- // A method which checks whether a spawn point is valid
+ 
+    /**
+     * 
+     * @param posX
+     * @param posY
+     * @return
+     * 
+     * A method which checks whether a spawn point is valid
+     * Checks whether spawn position is blocked or out of bounds
+     */
     public boolean isValidSpawnPosition(double posX, double posY) {
         int gridX = (int) (posX / TILE_SIZE);
         int gridY = (int) (posY / TILE_SIZE);
@@ -345,14 +429,14 @@ public class Game extends Application {
             return false;
         }
 
-        // Check horizontal continuity for three consecutive path tiles
+        // Check whether there are three consecutive path tiles in the horizontal direction
         if (gridX + 2 < NUM_TILES_X && 
             maze[gridX + 1][gridY] == 0 && 
             maze[gridX + 2][gridY] == 0) {
             return true;
         }
 
-        // Check vertical continuity for three consecutive path tiles
+        // Check whether there are three consecutive path tiles in the vertical direction
         if (gridY + 2 < NUM_TILES_Y && 
             maze[gridX][gridY + 1] == 0 && 
             maze[gridX][gridY + 2] == 0) {
@@ -363,7 +447,15 @@ public class Game extends Application {
         return false;
     }
 
-    //A method which checks whether a position has already been occupied by a Num1 object
+   
+    /**
+     * 
+     * @param posX
+     * @param posY
+     * @return
+     * 
+     * A method which checks whether a position has already been occupied by an enemy object
+     */
     private boolean isOccupied(double posX, double posY) {
         for (Enemy enemy : enemyList) {
             double distance = Math.sqrt(Math.pow((enemy.getX() - posX), 2) + Math.pow((enemy.getY() - posY), 2));
@@ -374,29 +466,55 @@ public class Game extends Application {
         return false;
     }
    
+    
+    /**
+     * 
+     * @param bullet
+     * @return
+     * 
+     * A method which detects whether a bullet has moved off screen
+     * Returns true if bullet's x coordinate is less than 0 or greater than the canvas width
+     * Returns true if bullet's y coordinate is less than 0 or greater than the canvas height
+     */
     private boolean isBulletOffScreen(Bullet bullet)  {
     	return bullet.getX() < 0 || bullet.getX() > canvas.getWidth()  || bullet.getY() < 0 || bullet.getY() > canvas.getHeight();
     }
     
-    
+    /**
+     * Method which controls the players ability to fire bullets
+     */
     private void fireBullet() {
+    	//Retrieves the coordinates of the players current position to use as the bullets starting point
         double bulletX = player.getX();
         double bulletY = player.getY();
+        //Create a new bullet using the Builder design pattern
+        //Specify the bullets x and y position, its graphics context and the type of bullet
         Bullet bullet = Bullet.builder()
                               .setPosition(bulletX, bulletY)
                               .setGraphicsContext(gc)
                               .setBulletType(currentBulletType)
+                              //Calling the builders build method
                               .build();
 
+        //If the bullet was successfully created then set its direction as the last direction the player moved and add it to the list of bullets
         if (bullet != null) {
             ((GameObject) bullet).setDirection(player.getLastDirection());  // Ensure all bullets can be treated as GameObjects
             bullets.add(bullet);
         } else {
+        	//If the bullet could not be created log an error for debugging
             System.err.println("Failed to create bullet instance.");
         }
     }
     
 
+    /**
+     * 
+     * @param newX
+     * @param newY
+     * @return
+     * 
+     * Method which tests whether a tile is a wall
+     */
     protected boolean isWall(double newX, double newY) {
         // Calculate the boundaries of the canvas
         double canvasWidth = gc.getCanvas().getWidth();
@@ -422,17 +540,28 @@ public class Game extends Application {
  // Flag to keep track of whether game over dialog has been shown
     private boolean isGameOverShown = false;
 
-    // Method to handle collision between player and enemies
+    
+    /**
+     *  Method to handle collision between player and enemies
+     */
     private void checkPlayerEnemyCollision() {
         for (Enemy enemy : enemyList) {
+        	//A loop which iterates through the list of enemies to check whether any of the enemy objects have had a collision with the player object
             if (player.intersects(enemy)) {
-                player.decrementLives(); // Decrease player lives
+            	// Decrease player lives
+                player.decrementLives(); 
                 lives.setCount(player.getLives());
+                
+                //if the player runs out of lives and the gameover message has not already been shown call the showGameOver method and stop the game.
                 if (player.getLives() <= 0 && !isGameOverShown) {
-                    Platform.runLater(this::showGameOver); // Ensure this runs on the JavaFX Application Thread
-                    isGameOverShown = true; // Set the flag to true
-                    root.getChildren().remove(player); // Remove the player from the root pane
-                    timer.stop(); // Stop the game loop
+                    Platform.runLater(this::showGameOver); 
+                 // Set the flag to true
+                    isGameOverShown = true; 
+                 // Remove the player from the root pane
+                    root.getChildren().remove(player); 
+                 // Stop the game loop
+                    timer.stop();
+                    //Conditional statement which respawns the player if they have lives remaining
                 } else if (player.getLives() > 0) {
                     // Respawn the player in a new location
                     respawnPlayer();
@@ -441,9 +570,14 @@ public class Game extends Application {
         }
     }
     
- // Method to respawn the player in a different location
+ 
+    /**
+     * Method to respawn the player in a different location
+     */
     private void respawnPlayer() {
+    	//Variables to hold the new spawn location
         double newX, newY;
+        //Lopp which runs until a valid player spawn point is found which does not collide with enemies
         do {
             int randomX = (int) (Math.random() * NUM_TILES_X);
             int randomY = (int) (Math.random() * NUM_TILES_Y);
@@ -459,9 +593,19 @@ public class Game extends Application {
         isGameOverAlertShown = false;
     }
     
- // Method to check if the player's new position collides with any enemy
+ 
+    /**
+     * 
+     * @param newX
+     * @param newY
+     * @return
+     * 
+     * Method to check if the player's new position collides with any enemy
+     */
     private boolean isPlayerCollidingWithEnemy(double newX, double newY) {
-        for (Enemy enemy : enemyList) {
+       //Checking for a collision between the player object and enemy objects
+    	//Compares the distance between the players new position and each enemy instance position
+    	for (Enemy enemy : enemyList) {
             if (Math.abs(enemy.getX() - newX) < TILE_SIZE && Math.abs(enemy.getY() - newY) < TILE_SIZE) {
                 return true;
             }
@@ -469,8 +613,12 @@ public class Game extends Application {
         return false;
     }
 
- // Show game over message
-    private void showGameOver() {
+ 
+    /**
+     * Show game over message
+     */
+        private void showGameOver() {
+        	//Shows the game over dialogue box only if it has not been shown yet
         if (!isGameOverAlertShown) {
             isGameOverAlertShown = true;
             Alert alert = new Alert(AlertType.INFORMATION);
@@ -486,26 +634,42 @@ public class Game extends Application {
 
     
     
-    
+    /**
+     * 
+     * @param bullet
+     * @param enemy
+     * @return
+     * Method which checks whether an instance of an enemy object collides with an instance of a bullet object
+     */
     private boolean collidesWith(Bullet bullet, Enemy enemy) {
         // Check if the bounding boxes of bullet and enemy intersect
+    	//Compares the position and dimension of each bullet instance and enemy instance to detect collisions
+    	//If any part of the bounding box of a bullet is within the bounds of the bounding box of an enemy object the method returns true
         return bullet.getX() < enemy.getX() + enemy.getWidth() &&
                bullet.getX() + bullet.getWidth() > enemy.getX() &&
                bullet.getY() < enemy.getY() + enemy.getHeight() &&
                bullet.getY() + bullet.getHeight() > enemy.getY();
     }
     
+    /**
+     * Method used to spawn enemies once the player has killed all the current enemies and increaqse the new instance speed
+     */
     private void spawnEnemies() {
+    	//Check whether the arrayList called enemyList is empty
         boolean respawn = enemyList.isEmpty();
+        //Increment the speed of the new enemies by the value specified in the SPEED_INCREMENT VARIABLE
         if (respawn) {
             currentSpeedIncrement += SPEED_INCREMENT;
         }
         
+        //Defining an array of enemies to spawn
         String[] types = {"num1", "num2", "num4", "num8"};
         Random random = new Random();
 
+        //Spawn a set of enemies the number of which is defined in NUM_NUM1_INSTANCES
         for (int i = 0; i < NUM_NUM1_INSTANCES; i++) {
             double posX, posY;
+            //loop which cycles through tiles until a valid spawn position is found for each enemy instance
             do {
                 int randomX = (int) (Math.random() * NUM_TILES_X);
                 int randomY = (int) (Math.random() * NUM_TILES_Y);
@@ -513,15 +677,20 @@ public class Game extends Application {
                 posY = randomY * TILE_SIZE + TILE_SIZE / 2;
             } while (!isValidSpawnPosition(posX, posY));
 
+            //Randomly select an enemy instance from the available types of enemy for each new enemy spawned
             String type = types[random.nextInt(types.length)];
+            //Use the factory design pattern to create an enemy of the randomly determined type at the chosen position
             Enemy enemy = (Enemy) factory.createProduct(type, this, posX, posY, TILE_SIZE);
+            //If the enemy object was successfully created, add it to the arrayList called enemy
             if (enemy != null) {
                 enemyList.add(enemy);
             }
         }
     }
 
-    
+   /**
+    * Method used to reset the state of the game 
+    */
     public void resetGame() {
     	//Reset score
     	player.setScore(0);
@@ -534,8 +703,8 @@ public class Game extends Application {
     	//When the existing enemies have been cleared spawn a new selection of enemies
     	spawnEnemies();
     	 	
-    	
-        currentSpeedIncrement = 0.0;  // Reset speed increment when the player dies
+    	// Reset speed increment when the player dies
+        currentSpeedIncrement = 0.0;  
         
         //Setting the isGameOver flag to false
         isGameOverShown = false;
@@ -543,7 +712,16 @@ public class Game extends Application {
         timer.start();
     }
     
+    /**
+     * 
+     * @param bullet
+     * @param enemy
+     * @return
+     * 
+     * Method which determines which bullet types can kill which enemies
+     */
     private boolean canKill(Bullet bullet, Enemy enemy) {
+    	//Uses instanceof to differentiate behaviour based on which bullet is selected and which enemy type is hit
         if (bullet instanceof Pow0Bullet && enemy instanceof Num1) {
             return true;
         } else if (bullet instanceof Pow1Bullet && enemy instanceof Num2) {
