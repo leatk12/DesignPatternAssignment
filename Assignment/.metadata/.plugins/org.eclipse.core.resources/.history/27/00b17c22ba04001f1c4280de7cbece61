@@ -1,0 +1,47 @@
+package Assignment.Game;
+
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
+
+public class InfoBox extends GameObject {
+    private VBox vbox;
+    private Label infoLabel;
+    private Button okButton;
+
+    public InfoBox(Game game, double x, double y, double width, double height) {
+        super(game, x, y, width, height, null); // GraphicsContext will be null for InfoBox
+
+        // Initialise VBox for layout
+        vbox = new VBox();
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setSpacing(20);
+
+        // Initialise label to display information
+        infoLabel = new Label("Welcome to the Game!\n\nExplanation of rules and how the game works.");
+
+        // Initialise OK button to close the info box
+        okButton = new Button("OK");
+        okButton.setOnAction(event -> {
+            // Close the info box and start the game
+            game.startGame();
+        });
+
+        // Add components to the VBox
+        vbox.getChildren().addAll(infoLabel, okButton);
+
+        // Set position of VBox
+        vbox.setLayoutX(x - width / 2);
+        vbox.setLayoutY(y - height / 2);
+    }
+
+    @Override
+    public void update() {
+        // Display the info box
+        game.getRoot().getChildren().add(vbox);
+    }
+
+    // You may add other methods as needed
+}
+
