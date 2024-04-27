@@ -1,0 +1,68 @@
+package Assignment.Game;
+
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+
+public class InfoBox extends GameObject {
+    private VBox vbox;
+    private Label infoLabel;
+    private Button okButton;
+
+    public InfoBox(Game game, double x, double y, double width, double height) {
+        super(game, x, y, width, height, null); // GraphicsContext will be null for InfoBox
+
+        // Initialise VBox for layout
+        vbox = new VBox();
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setSpacing(20);
+
+        //Give the infobox a background colour
+        vbox.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, CornerRadii.EMPTY, javafx.geometry.Insets.EMPTY)));
+        
+        // Initialise label to display information
+        infoLabel = new Label("<html><b>Welcome to the Power of 2!</b><br/><br/><br/>Welcome to Alphabetrium our hero.<br/><br/>nWe are under attack by the evil numbericons.  They have sent their most powerful soldiers; <b>The powers of 2.</b><br/>These evil soldiers can only be beaten by using bullets derived from the <b>power of two</b> which matches each Numbericon."
+        		+ "<br/><br/>To help you battle them i will teach you how to know which bullet to use to defeat them. Listen carefully:<br/><br/>"
+        		+ "<b>Numbericon 1</b> - This enemy's weakness is the <b>power of 0.  2^0 = 1.</b>  so make sure you press <b>0</b> on your keypad when you see a Numbericon 1 trooper.<br/><br/>"
+        		+ "<b>Numbericon 2</b> - This enemy's weakness is the <b>power of 1. 2^1 = 2.</b>  So make sure you press <b>1</b> on your keypad when you see a Numbericon 2 trooper. <br/><br/>"
+        		+ "<b>Numbericon 4</b> - This enemy's weakness is the <b>power of 2.  2^2 = 4.</b>  So make sure you press <b>2</b> on your keypad when you see a Numbericon 4 trooper. <br/><br/>"
+        		+ "<b>Numbericon 8</b> - This enemy's weakness is the <b>power 3 of.  2^3 = 8.</b>  So make sure you press <b>3</b> on your keypad when you see a Numbericon 8 trooper. <br/><br/>"
+        		+ "Once you are confident with which bullets to use for which enemy press ok to start defending Alphabetrium. ");
+
+        //Centre and align the contents of the infolabel
+        infoLabel.setAlignment(Pos.CENTER);
+        
+        
+        // Initialise OK button to close the info box
+        okButton = new Button("OK");
+        okButton.setOnAction(event -> {
+            // Close the info box
+            hide();
+            // Start the game
+            game.startGame();
+        });
+
+        // Add components to the VBox
+        vbox.getChildren().addAll(infoLabel, okButton);
+
+        // Set position of VBox
+        vbox.setLayoutX(x - width / 2);
+        vbox.setLayoutY(y - height / 2);
+    }
+
+    @Override
+    public void update() {
+        // Display the info box
+        game.getRoot().getChildren().add(vbox);
+    }
+
+    // Method to hide the info box
+    public void hide() {
+        game.getRoot().getChildren().remove(vbox);
+    }
+}

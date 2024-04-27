@@ -5,31 +5,60 @@ import javafx.scene.image.Image;
 
 public class Pow3Bullet extends GameObject implements Bullet {
 	
+	//Private string used to store the direction the bullet is moving
 	private String direction;
 	
+	/**
+	 * 
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 * @param gc
+	 * 
+	 * Constructor for Pow3Bullet class
+	 */
 	public Pow3Bullet(double x, double y, double width, double height, GraphicsContext gc) {
-        super(null, x, y, width, height, gc);
+		//Call the superclass, GameObject, constructor.  Pass the Game game parameter as null as it is not needed
+		super(null, x, y, width, height, gc);
+		// Initialise the bullet image from resources
         this.img = new Image(Pow3Bullet.class.getResource("Pow3Bullet.png").toExternalForm());
 }
 
+	
+	/**
+	 * Setter method to set the direction of the bullet
+	 */
 	public void setDirection(String direction)  {
 		this.direction = direction;
 	}
 
+	/**
+	 * Concrete implementation of the shoot method from the Bullet interface
+	 */
 	@Override
 	public void shoot() {
-		// TODO Auto-generated method stub
+		//Define the bullets behaviour based on the value in the direction variable
+				//Switch statement based on the current direction
 		switch (direction)  {
+		//If the direction is LEFT
 		case "LEFT":
+			//Move the bullet to the right by reducing the x variable by the value of the speedX variable
 			x -= speedX;
 			break;
+			//If the direction is RIGHT
 		case "RIGHT":
+			//Move the bullet to the right by increasing the x variable by the value of the speedX variable
 			x += speedX;
 			break;
+			//If the direction is UP
 		case "UP":
+			//Move the bullet to the right by decreasing the y variable by the value of the speedY variable
 			y -= speedY;
 			break;
+			//If the direction is DOWN
 		case "DOWN":
+			//Move the bullet to the right by increasing the y variable by the value of the speedY variable
 			y += speedY;
 			break;
 			
@@ -37,34 +66,65 @@ public class Pow3Bullet extends GameObject implements Bullet {
 	}
 	
 	
+	
+	/**
+	 * Method to render the bullet on the canvas
+	 */
 	public void render()  {
+		//Check whether the bullet image has loaded
 		if (img != null) {
+			//Output the position the bullet was rendered at for debugging purposes
 			System.out.println("Rendering bullet at " + x + ", " + y);
+			//Draw the bullet image centres at (x,y)
 			gc.drawImage(img,  x - width / 2,  y - height / 2, width, height);
 	} else {
+		//Log to the console if the image is not loaded
 		System.out.println("Bullet image not loaded");
 	}
 }
 
+	
+	/**
+	 * @return
+	 * 
+	 * Getter method to return the value of y
+	 */
 	public double getY() {
-		// TODO Auto-generated method stub
+		
 		return y;
 	}
 
+	/**
+	 * @return
+	 * 
+	 * Getter method to return the value of x
+	 */
 	public double getX() {
-		// TODO Auto-generated method stub
+		
 		return x;
 	}
 
+	
+	/**
+	 * @return
+	 * 
+	 * Getter method which returns the value of width
+	 */
 	@Override
 	public double getWidth() {
-		// TODO Auto-generated method stub
+		
 		return width;
 	}
 
+	
+	/**
+	 * @return
+	 * 
+	 * Getter method which returns that value of height
+	 */
 	@Override
 	public double getHeight() {
-		// TODO Auto-generated method stub
+		
 		return height;
 	}
 }

@@ -1,0 +1,50 @@
+package Assignment.Game;
+
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+
+public class Lives extends GameObject {
+    //Private variable to keep track of the number of lives the player has
+	private int count;
+
+	/**
+	 * 
+	 * @param game
+	 * @param x
+	 * @param y
+	 * @param count
+	 * @param gc
+	 * 
+	 * Constructor for the lives class
+	 */
+    public Lives(Game game, double x, double y, int count, GraphicsContext gc) {
+       //Calls the superclass GameObject.java and passes the dimensions 30x30 pixels
+    	super(game, x, y, 30, 30, gc);  
+        //Initialises the count variable with the provided value
+    	this.count = count;
+    	//Loads the image from the lives resource
+        this.img = new Image(Lives.class.getResource("lives.png").toExternalForm());
+    }
+
+    @Override
+    public void update() {
+        for (int i = 0; i < count; i++) {
+            double offsetX = i * 30;  // 30 pixels apart from each life image
+            gc.drawImage(img, x + offsetX, y, width, height);
+        }
+    }
+
+    public void decrement() {
+        if (count > 0) {
+            count--;
+        }
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+}
