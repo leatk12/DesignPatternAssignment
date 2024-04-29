@@ -12,6 +12,7 @@ import javafx.scene.canvas.GraphicsContext;
 public interface Bullet {
    //Method that defines shooting behaviour
 	void shoot();
+	void setDirection(String direction);
 
 	
 	

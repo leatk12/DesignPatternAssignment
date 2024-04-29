@@ -88,4 +88,11 @@ public class Num8 extends Enemy {
 		// TODO Auto-generated method stub
 		return y;
 	}
+
+
+	@Override
+	public void updateBehaviour() {
+		// TODO Auto-generated method stub
+		
+	}
 }

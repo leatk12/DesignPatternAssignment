@@ -69,60 +69,16 @@ public class GameObject {
         behaviour.updateBehaviour(); 
     }
 
-    /**
-     * Method which moves the game object to the left
-     */
-    public void moveLeft() {
-    	//Calculate the new x coordinate after moving to the left
-        double newX = x - Game.getTileSize();
-        //Check that the new position is not a wall using a call to the isWall method in the Game.java class
-        if (!game.isWall(newX, y)) {
-        	//Update the new x coordinate
-            x = newX;
-        }
-    }
+    
 
     
-    /**
-     * Method which moves the game object to the right
-     */
-    public void moveRight() {
-    	//Calculate the new x coordinate after moving to the left
-        double newX = x + Game.getTileSize();
-      //Check that the new position is not a wall using a call to the isWall method in the Game.java class
-        if (!game.isWall(newX, y)) {
-        	//Update the new x coordinate
-            x = newX;
-        }
-    }
+    
 
     
-    /**
-     * Method which moves the game object up
-     */
-    public void moveUp() {
-    	//Calculate the new y coordinate after moving up
-        double newY = y - Game.getTileSize();
-      //Check that the new position is not a wall using a call to the isWall method in the Game.java class
-        if (!game.isWall(x, newY)) {
-        	//Update the new y coordinate
-            y = newY;
-        }
-    }
+    
 
     
-    /**
-     * Method which moves the game object down
-     */
-    public void moveDown() {
-    	//Calculate the new y coordinate after moving down
-        double newY = y + Game.getTileSize();
-      //Check that the new position is not a wall using a call to the isWall method in the Game.java class
-        if (!game.isWall(x, newY)) {
-        	//Update the new y coordinate
-            y = newY;
-        }
-    }
+   
 
 
    
@@ -148,16 +104,7 @@ public class GameObject {
 		}
     }
 
-    /**
-     * 
-     * @param lastDirection
-     * 
-     * Abstract method to set the direction variable
-     */
-	  void setDirection(String lastDirection) {
-		// TODO Auto-generated method stub
-		
-	}
+    
 
 	  /**
 	   * Abstract method to render an object
@@ -167,47 +114,5 @@ public class GameObject {
 		
 	}
 
-	/**
-	 * 
-	 * @return
-	 * 
-	 * Getter method which returns the x variable
-	 */
-	public double getX() {
-		
-		return x;
-	}
-
-	/**
-	 * 
-	 * @return
-	 * 
-	 * Getter method which returns the y variable
-	 */
-	public double getY() {
-		// TODO Auto-generated method stub
-		return y;
-	}
-
-	/**
-	 * 
-	 * @return
-	 * 
-	 * Getter method which returns the height variable
-	 */
-	public double getHeight() {
-		// TODO Auto-generated method stub
-		return height;
-	}
-
-	/**
-	 * 
-	 * @return
-	 * 
-	 * Getter method which returns the width variable
-	 */
-	public double getWidth() {
-		// TODO Auto-generated method stub
-		return width;
-	}
+	
 }

@@ -498,7 +498,7 @@ public class Game extends Application {
 
         //If the bullet was successfully created then set its direction as the last direction the player moved and add it to the list of bullets
         if (bullet != null) {
-            ((GameObject) bullet).setDirection(player.getLastDirection());  // Ensure all bullets can be treated as GameObjects
+            bullet.setDirection(player.getLastDirection());  // Ensure all bullets can be treated as GameObjects
             bullets.add(bullet);
         } else {
         	//If the bullet could not be created log an error for debugging

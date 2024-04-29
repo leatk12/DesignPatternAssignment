@@ -28,6 +28,7 @@ public class Pow1Bullet extends GameObject implements Bullet {
 	/**
 	 * Setter method to set the direction of the bullet
 	 */
+	@Override
 	public void setDirection(String direction)  {
 		//Set the internal direction field
 		this.direction = direction;

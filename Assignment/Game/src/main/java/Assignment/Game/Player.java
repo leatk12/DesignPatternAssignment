@@ -96,6 +96,17 @@ public class Player extends GameObject implements GameObjectBehaviour{
     
     /**
      * 
+     * @param lastDirection
+     * 
+     * Abstract method to set the direction variable
+     */
+	  void setDirection(String lastDirection) {
+		// TODO Auto-generated method stub
+		
+	}
+    
+    /**
+     * 
      * @return
      * 
      * Getter method which returns the value of the lastDirection variable
@@ -220,49 +231,73 @@ public class Player extends GameObject implements GameObjectBehaviour{
     
     
     /**
-     * Method which overrides the moveLeft method from GameObject
+     * Method which moves the game object to the left
      */
-    @Override
-    public void moveLeft()  {
-    	//Call the superclass method to move the player left
-    	super.moveLeft();
-    	//Initialise the lastDirection variable with the value "LEFT"
+    public void moveLeft() {
+    	//Calculate the new x coordinate after moving to the left
+        double newX = x - Game.getTileSize();
+        //Check that the new position is not a wall using a call to the isWall method in the Game.java class
+        if (!game.isWall(newX, y)) {
+        	//Update the new x coordinate
+            x = newX;
+        }
+      //Initialise the lastDirection variable with the value "LEFT"
     	lastDirection ="LEFT";
     }
+    	
+    
     
     /**
-     * method which overrides the moveRight method from GameObject
+     * Method which moves the game object to the right
      */
-    @Override
-    public void moveRight()  {
-    	//Call the superclass method to move the player right
-    	super.moveRight();
-    	//Initialise the lastDirection variable with the value "RIGHT"
+    public void moveRight() {
+    	//Calculate the new x coordinate after moving to the left
+        double newX = x + Game.getTileSize();
+      //Check that the new position is not a wall using a call to the isWall method in the Game.java class
+        if (!game.isWall(newX, y)) {
+        	//Update the new x coordinate
+            x = newX;
+        }
+      //Initialise the lastDirection variable with the value "RIGHT"
     	lastDirection = "RIGHT";
     }
+    	
+    
     
     
     /**
-     *Method which overrides the moveUp method in the GameObject class
+     * Method which moves the game object up
      */
-    @Override
-    public void moveUp()  {
-    	//Call the superclass method to move the player right
-    	super.moveUp();
-    	//Initialise the lastDirection variable with the value "UP"
-    lastDirection = "UP";
+    public void moveUp() {
+    	//Calculate the new y coordinate after moving up
+        double newY = y - Game.getTileSize();
+      //Check that the new position is not a wall using a call to the isWall method in the Game.java class
+        if (!game.isWall(x, newY)) {
+        	//Update the new y coordinate
+            y = newY;
+        }
+      //Initialise the lastDirection variable with the value "UP"
+        lastDirection = "UP";
     }
+    	
+    
     
     /**
-     * Method which overrides the moveDown method in the GameObject class
+     * Method which moves the game object down
      */
-    @Override
-    public void moveDown()  {
-    	//Call the superclass method to move the player right
-    	super.moveDown();
-    	//Initialise the lastDirection variable with the value "DOWN"
+    public void moveDown() {
+    	//Calculate the new y coordinate after moving down
+        double newY = y + Game.getTileSize();
+      //Check that the new position is not a wall using a call to the isWall method in the Game.java class
+        if (!game.isWall(x, newY)) {
+        	//Update the new y coordinate
+            y = newY;
+        }
+      //Initialise the lastDirection variable with the value "DOWN"
     	lastDirection = "DOWN";
     }
+    	
+    
     
     
 
