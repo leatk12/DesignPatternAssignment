@@ -10,6 +10,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
@@ -17,12 +19,17 @@ import javafx.stage.Stage;
 
 import javafx.scene.input.KeyEvent;
 
+import java.io.File;
+import java.net.URL;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import javafx.util.Duration;
 
 public class Game extends Application {
 
@@ -77,6 +84,12 @@ public class Game extends Application {
     Player player;
     
     private Class<? extends Bullet> currentBulletType = Pow0Bullet.class;
+    
+    //Defining the path to the bullet.mp3 sound file
+    String bulletSoundFile = getClass().getResource("bullet.mp3").toString();
+    Media bulletMedia = new Media(bulletSoundFile);
+    MediaPlayer mediaPlayer = new MediaPlayer(bulletMedia);
+    
 
     //The main method which is used to start the application
     public static void main(String[] args) {
@@ -103,7 +116,20 @@ public class Game extends Application {
         primaryStage.setFullScreen(true);
         //Displays the stage
         primaryStage.show();
-
+        
+     
+     // Load and play background music
+        URL resource = getClass().getResource("Desert-Mayhem.mp3");
+        if (resource == null) {
+            System.out.println("Background music file not found");
+        } else {
+            Media media = new Media(resource.toString());
+            MediaPlayer mediaPlayer = new MediaPlayer(media);
+            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // Loop indefinitely
+            mediaPlayer.play();
+        }
+        
+        
         //Using the canvas width calculate the number of horizontal tiles 
         NUM_TILES_X = (int) (canvas.getWidth() / TILE_SIZE);
         //Using the canvas height calculate the number of vertical tiles
@@ -144,10 +170,14 @@ public class Game extends Application {
 
         //Call to the spawnEnemies method which creates the initial enemies of the game
         spawnEnemies();
+        
+     
 
         //Creating an animation timer which will handle the games logic during each animation frame
         
         timer = new AnimationTimer() {
+        	
+        	
             long lastSpawnTime = 0;
 
             @Override
@@ -495,6 +525,9 @@ public class Game extends Application {
                               .setBulletType(currentBulletType)
                               //Calling the builders build method
                               .build();
+        //Restet the media player to the beginning of the source to allow the sound effect to play each time a bullet is fired
+        mediaPlayer.seek(Duration.ZERO);
+        mediaPlayer.play();
 
         //If the bullet was successfully created then set its direction as the last direction the player moved and add it to the list of bullets
         if (bullet != null) {
