@@ -69,4 +69,9 @@ public class Lives extends GameObject {
     public void setCount(int count) {
         this.count = count;
     }
+
+	public int getX() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }
